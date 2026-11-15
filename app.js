@@ -1004,7 +1004,7 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     31:[6,19,6],32:[7,19,6],33:[7,20,6],34:[7,20,7],35:[7,21,7],
     36:[7,22,7],37:[8,22,7],38:[8,23,7],39:[8,23,8],40:[8,24,8],
     41:[8,25,8],42:[9,25,8],43:[9,26,8],44:[9,26,9],45:[9,27,9],
-    46:[9,28,9],47:[10,28,9],48:[10,29,9],49:[10,29,10],50:[10,30,10]
+    46:[9,28,9],47:[10,28,9],48:[10,29,9],49:[10,29,10]
   };
   const setPowerplay = (prefix, overs) => {
     const values = overs == null ? null : powerplayAllocations[String(Math.trunc(overs))];
