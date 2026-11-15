@@ -84,3 +84,44 @@
 .upload-status{font-size:11px;color:#63748b;margin:0;line-height:1.45}
 #syncNow:disabled{opacity:.55;cursor:wait}
 @media(max-width:650px){.capturer-grid{grid-template-columns:1fr}.upload-box-heading,.upload-actions{align-items:stretch;flex-direction:column}.upload-config-actions{align-items:stretch;flex-direction:column}.upload-config-actions .button,.upload-actions .button{width:100%}}
+\n\n/* Version 2.0 Development prototype: top-level application tabs */
+.app-tabs{display:flex;gap:5px;overflow-x:auto;overscroll-behavior-x:contain;border-bottom:1px solid var(--line);margin:0 0 22px;padding:0 2px;scrollbar-width:thin}
+.app-tab{flex:0 0 auto;border:0;border-bottom:3px solid transparent;background:transparent;color:#718097;padding:13px 17px 11px;font:inherit;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
+.app-tab:hover{color:var(--navy2);background:#eaf0f8}
+.app-tab.active{color:var(--navy);border-bottom-color:#d2a64f}
+.app-tab:focus-visible{outline:3px solid #78a5f5;outline-offset:-3px}
+.app-tab-panel[hidden]{display:none!important}
+.app-tab-panel{min-width:0}
+.appendix-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin:3px 2px 18px}
+.appendix-heading h1{margin:5px 0;color:var(--navy);font-size:clamp(25px,4vw,34px);letter-spacing:-.035em}
+.appendix-panel{margin:15px 0}
+.calc-group-title{margin:18px 0 9px;color:var(--navy2);font-size:14px}
+.calc-table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+.calc-sheet{border-collapse:collapse;width:100%;min-width:560px;font-size:12px}
+.calc-sheet th,.calc-sheet td{padding:9px 11px;border-bottom:1px solid #e7ecf2;text-align:left;vertical-align:middle}
+.calc-sheet th{background:#edf2f8;color:#435570;font-size:10px;text-transform:uppercase;letter-spacing:.07em}
+.calc-sheet tr:last-child td{border-bottom:0}
+.calc-sheet td:first-child{width:48px;font-weight:850;color:var(--navy2);text-align:center}
+.calc-sheet td:nth-child(2){color:#40516a}
+.calc-sheet td:last-child{width:190px}
+.calc-sheet input{width:100%;min-width:90px;min-height:36px;padding:7px 9px;border:1px solid #cfd8e4;border-radius:7px;font:inherit;font-size:12px;color:var(--ink);background:#fff}
+.calc-sheet input[readonly]{background:#f1f5fa;font-weight:800}
+.calc-sheet td:last-child span{margin-left:7px;color:var(--muted);font-size:10px}
+.calc-sheet .split-entry{display:flex;align-items:center;gap:7px}
+.calc-sheet .split-entry input{min-width:0;width:75px}
+.appendix-warning{margin:13px 0 0;padding:12px 14px;border-left:3px solid #d2a64f;background:#fffaf0;color:#75633d;border-radius:7px;font-size:11px;line-height:1.55}
+.decision-notes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.decision-notes p{margin:0;padding:12px;border:1px solid var(--line);border-radius:9px;background:#f7f9fc;font-size:12px;color:#53647b}
+.appendix-footnote{margin:16px 2px;color:var(--muted);font-size:11px;line-height:1.5}
+.placeholder-panel{padding:12px 2px;min-height:280px}
+.help-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 14px}
+.help-grid .panel{margin:8px 0}
+.help-grid h2{margin:0 0 7px;color:var(--navy);font-size:16px}
+.help-grid p{margin:0;color:var(--muted);font-size:12px}
+@media(max-width:650px){
+ .app-tabs{margin:0 -12px 17px;padding:0 10px;gap:1px}
+ .app-tab{padding:12px 13px 10px;font-size:12px}
+ .appendix-heading{flex-direction:column}
+ .decision-notes,.help-grid{grid-template-columns:1fr}
+ .calc-sheet{min-width:500px}
+}
