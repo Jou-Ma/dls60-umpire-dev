@@ -181,13 +181,13 @@
     <section class="app-tab-panel" id="tab-a" role="tabpanel" aria-labelledby="tab-button-a" hidden>
       <div class="appendix-heading">
         <div><div class="step-label">TIME-BASED CALCULATIONS</div><h1>Appendix A</h1><p class="panel-hint">Calculation sheets for delays and interruptions. Enter the relevant inputs; calculated fields update automatically. Use this tab only when the applicable match conditions require these time-based calculations.</p></div>
-        <span class="tag">Draft layout</span>
+        <div class="appendix-heading-actions"><span class="tag">Draft layout</span><button class="button button-secondary" id="resetAppendixA" type="button">Reset Appendix A</button></div>
       </div>
       <section class="panel appendix-panel">
         <div class="panel-heading"><div><div class="step-label">TABLE 1</div><h2>First-innings delay or interruptions</h2><p class="panel-hint">Use when a delay or interruption occurs during the First Innings.</p></div></div>
         <h3 class="calc-group-title">Time</h3>
         <div class="calc-table-wrap"><table class="calc-sheet"><thead><tr><th>Ref.</th><th>Calculation / description</th><th>Entry</th></tr></thead><tbody>
-          <tr><td>A</td><td>Net playing time available at start of the match</td><td><input value="420" readonly aria-label="A: Net playing time available at start of match"><span>minutes</span></td></tr>
+          <tr><td>A</td><td>Net playing time available at start of the match</td><td><input data-calc="a-a" inputmode="numeric" placeholder="Minutes" aria-label="A: Net playing time available at start of match"><span>minutes</span></td></tr>
           <tr><td>B</td><td>Time innings in progress</td><td><input data-calc="a-b" inputmode="numeric" placeholder="Minutes"></td></tr>
           <tr><td>C</td><td>Playing time lost</td><td><input data-calc="a-c" inputmode="numeric" placeholder="Minutes"></td></tr>
           <tr><td>D</td><td>Extra time available</td><td><input data-calc="a-d" inputmode="numeric" placeholder="Minutes"></td></tr>
