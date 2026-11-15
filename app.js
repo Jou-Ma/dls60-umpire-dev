@@ -737,7 +737,8 @@ $('exportCsv').addEventListener('click', () => {
   const header = ['Overs bowled', 'Overs remaining', ...Array.from({ length: 10 }, (_, i) => `${i} wickets`)];
   const lines = [header, ...rows.map(row => [row.oversBowled, row.oversRemaining, ...row.par])]
     .map(row => row.map(value => `"${String(value).replaceAll('"', '""')}"`).join(','));
-  downloadBlob(`${safeFilename(currentInput?.matchName)}-${$('exportCsv').dataset.table}-par-scores.csv`, lines.join('\r\n'), 'text/csv;charset=utf-8');
+  downloadBlob(`${safeFilename(currentInput?.matchName)}-${$('exportCsv').dataset.table}-par-scores.csv`, lines.join('\r
+'), 'text/csv;charset=utf-8');
 });
 
 const STORAGE_KEY = 'dls60-umpire-saved-v1';
@@ -960,7 +961,9 @@ clearControlErrors();
 updateReportAvailability();
 $('autoCalcStatus').textContent = 'Select a match type and enter the match details. Calculations update automatically.';
 if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true }), 900);
-\n\n// Version 2.0 Development prototype: top-level application tab navigation.
+
+
+// Version 2.0 Development prototype: top-level application tab navigation.
 const appTabButtons = Array.from(document.querySelectorAll('[data-app-tab]'));
 const appTabPanels = appTabButtons.map(button => document.getElementById(button.getAttribute('aria-controls')));
 function activateAppTab(name, moveFocus = false) {
