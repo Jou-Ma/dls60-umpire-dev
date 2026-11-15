@@ -1027,10 +1027,10 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
   const ceilMinutes = value => Math.ceil(value - 1e-10);
   const update = () => {
     // Table 1 — first-innings interruption.
-    const b = number('a-b'), c = number('a-c'), d = number('a-d'), e = number('a-e');
+    const a = number('a-a'), b = number('a-b'), c = number('a-c'), d = number('a-d'), e = number('a-e');
     const f = c == null || d == null || e == null ? null : c - (d + e);
     setNumber('a-f', f);
-    const g = f == null ? null : 420 - f;
+    const g = a == null || f == null ? null : a - f;
     setNumber('a-g', g);
     const h = g == null ? null : Number((g / 4.2).toFixed(2));
     setNumber('a-h', h, 2);
@@ -1095,6 +1095,11 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     setBowlingRestriction('d-bowler', dj);
     setPowerplay('d', dj);
   };
+  const resetButton = document.getElementById('resetAppendixA');
+  if (resetButton) resetButton.addEventListener('click', () => {
+    document.querySelectorAll('[data-calc]').forEach(el => { el.value = ''; });
+    update();
+  });
   document.querySelectorAll('[data-calc]').forEach(el => {
     el.addEventListener('input', update);
     el.addEventListener('change', update);
