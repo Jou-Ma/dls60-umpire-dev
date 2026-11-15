@@ -961,6 +961,113 @@ $('autoCalcStatus').textContent = 'Select a match type and enter the match detai
 if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true }), 900);
 
 
+
+// Appendix A calculation worksheet. Inputs remain independent of the DLS calculator;
+// switching tabs does not clear values. Derived cells are read-only and recalculate
+// whenever any Appendix A input changes.
+(() => {
+  const fields = Object.fromEntries(
+    Array.from(document.querySelectorAll('[data-calc]')).map(el => [el.dataset.calc, el])
+  );
+  const number = key => {
+    const value = fields[key]?.value?.trim();
+    if (value === '' || value == null) return null;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+  const setNumber = (key, value, decimals = 0) => {
+    const el = fields[key];
+    if (!el) return;
+    el.value = value == null || !Number.isFinite(value) ? '' :
+      (decimals ? value.toFixed(decimals) : String(value));
+  };
+  const timeMinutes = key => {
+    const value = fields[key]?.value;
+    if (!value || !/^\\d{2}:\\d{2}$/.test(value)) return null;
+    const [hours, minutes] = value.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+  const setTime = (key, minutes) => {
+    const el = fields[key];
+    if (!el) return;
+    if (minutes == null || !Number.isFinite(minutes)) { el.value = ''; return; }
+    const wrapped = ((Math.round(minutes) % 1440) + 1440) % 1440;
+    el.value = String(Math.floor(wrapped / 60)).padStart(2, '0') + ':' +
+      String(wrapped % 60).padStart(2, '0');
+  };
+  const ceilOvers = value => Math.ceil(value - 1e-10);
+  const ceilMinutes = value => Math.ceil(value - 1e-10);
+  const update = () => {
+    // Table 1 — first-innings interruption.
+    const b = number('a-b'), c = number('a-c'), d = number('a-d'), e = number('a-e');
+    const f = c == null || d == null || e == null ? null : c - (d + e);
+    setNumber('a-f', f);
+    const g = f == null ? null : 420 - f;
+    setNumber('a-g', g);
+    const h = g == null ? null : Number((g / 4.2).toFixed(2));
+    setNumber('a-h', h, 2);
+    const i = h == null ? null : ceilOvers(h / 2);
+    setNumber('a-i', i);
+    setNumber('a-bowler', i == null ? null : ceilOvers(i / 5));
+
+    const j = timeMinutes('a-j'), m = number('a-m');
+    const k = i == null ? null : ceilMinutes(i * 4.2);
+    setNumber('a-k', k);
+    const l = j == null || k == null || b == null ? null : j + (k - b);
+    setTime('a-l', l);
+    const n = l == null || m == null ? null : l + m;
+    setTime('a-n', n);
+    const o = n == null || k == null ? null : n + k;
+    setTime('a-o', o);
+
+    // Table 2 — determine whether the first innings can resume.
+    const p = timeMinutes('b-p'), q = timeMinutes('b-q');
+    let r = null;
+    if (p != null && q != null) r = ((q - p) + 1440) % 1440;
+    setNumber('b-r', r);
+    const s = r == null ? null : ceilOvers(r / 4.2);
+    setNumber('b-s', s);
+    const t = number('b-t');
+    const terminated = s != null && t != null && s <= t;
+    const decision = fields['b-s']?.closest('tr');
+    if (decision) decision.dataset.inningsDecision = s == null || t == null ? 'pending' : terminated ? 'terminated' : 'resume';
+
+    // Table 3 — when Table 2 determines that the first innings is terminated.
+    const a3 = terminated ? s : null;
+    setNumber('c-a', a3);
+    const b3 = a3 == null ? null : ceilMinutes(a3 * 4.2);
+    setNumber('c-b', b3);
+    const c3 = timeMinutes('c-c');
+    const d3 = c3 == null || b3 == null ? null : c3 + b3;
+    setTime('c-d', d3);
+    setNumber('c-bowler', a3 == null ? null : ceilOvers(a3 / 5));
+
+    // Table 4 — second-innings interruption.
+    const da = timeMinutes('d-a'), db = timeMinutes('d-b'), dc = number('d-c'), dd = timeMinutes('d-d');
+    let de = null;
+    if (db != null && dd != null) de = ((dd - db) + 1440) % 1440;
+    setNumber('d-e', de);
+    const df = number('d-f');
+    const dg = de == null || df == null ? null : de - df;
+    setNumber('d-g', dg);
+    const dh = number('d-h');
+    const di = dg == null ? null : Math.floor(dg / 4.2 + 1e-10);
+    setNumber('d-i', di);
+    const dj = dh == null || di == null ? null : dh - di;
+    setNumber('d-j', dj);
+    const dk = dj == null ? null : ceilMinutes(dj * 4.2);
+    setNumber('d-k', dk);
+    const dl = dd == null || dk == null || dc == null ? null : dd + (dk - dc);
+    setTime('d-l', dl);
+    setNumber('d-bowler', dj == null ? null : ceilOvers(dj / 5));
+  };
+  document.querySelectorAll('[data-calc]').forEach(el => {
+    el.addEventListener('input', update);
+    el.addEventListener('change', update);
+  });
+  update();
+})();
+
 // Version 2.0 Development prototype: top-level application tab navigation.
 const appTabButtons = Array.from(document.querySelectorAll('[data-app-tab]'));
 const appTabPanels = appTabButtons.map(button => document.getElementById(button.getAttribute('aria-controls')));
