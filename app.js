@@ -995,6 +995,15 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     el.value = String(Math.floor(wrapped / 60)).padStart(2, '0') + ':' +
       String(wrapped % 60).padStart(2, '0');
   };
+  const bowlingRestrictions = {"5":"2 × 2, 1 × 1","6":"3 × 2","7":"3 × 2, 1 × 1","8":"4 × 2","9":"4 × 2, 1 × 1","10":"5 × 2","11":"1 × 3, 4 × 2","12":"2 × 3, 3 × 2","13":"3 × 3, 2 × 2","14":"4 × 3, 1 × 2","15":"5 × 3","16":"1 × 4, 4 × 3","17":"2 × 4, 3 × 3","18":"3 × 4, 2 × 3","19":"4 × 4, 1 × 3","20":"5 × 4","21":"1 × 5, 4 × 4","22":"2 × 5, 3 × 4","23":"3 × 5, 2 × 4","24":"4 × 5, 1 × 4","25":"5 × 5","26":"1 × 6, 4 × 5","27":"2 × 6, 3 × 5","28":"3 × 6, 2 × 5","29":"4 × 6, 1 × 5","30":"5 × 6","31":"1 × 7, 4 × 6","32":"2 × 7, 3 × 6","33":"3 × 7, 2 × 6","34":"4 × 7, 1 × 6","35":"5 × 7","36":"1 × 8, 4 × 7","37":"2 × 8, 3 × 7","38":"3 × 8, 2 × 7","39":"4 × 8, 1 × 7","40":"5 × 8","41":"1 × 9, 4 × 8","42":"2 × 9, 3 × 8","43":"3 × 9, 2 × 8","44":"4 × 9, 1 × 8","45":"5 × 9","46":"1 × 10, 4 × 9","47":"2 × 10, 3 × 9","48":"3 × 10, 2 × 9","49":"4 × 10, 1 × 9","50":"5 × 10"};
+  const bowlingCap = overs => {
+    if (overs == null || !Number.isFinite(overs)) return null;
+    const restriction = bowlingRestrictions[String(Math.trunc(overs))];
+    if (!restriction) return null;
+    const cap = Math.max(...Array.from(restriction.matchAll(/×\s*(\d+)/g), match => Number(match[1])));
+    return Number.isFinite(cap) ? cap : null;
+  };
+  const bowlingDescription = overs => overs == null ? '' : (bowlingRestrictions[String(Math.trunc(overs))] || 'Not specified in supplied table');
   const ceilOvers = value => Math.ceil(value - 1e-10);
   const ceilMinutes = value => Math.ceil(value - 1e-10);
   const update = () => {
@@ -1008,7 +1017,8 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     setNumber('a-h', h, 2);
     const i = h == null ? null : ceilOvers(h / 2);
     setNumber('a-i', i);
-    setNumber('a-bowler', i == null ? null : ceilOvers(i / 5));
+    setNumber('a-bowler', bowlingCap(i));
+    if (fields['a-bowler']) fields['a-bowler'].title = bowlingDescription(i);
 
     const j = timeMinutes('a-j'), m = number('a-m');
     const k = i == null ? null : ceilMinutes(i * 4.2);
@@ -1040,7 +1050,8 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     const c3 = timeMinutes('c-c');
     const d3 = c3 == null || b3 == null ? null : c3 + b3;
     setTime('c-d', d3);
-    setNumber('c-bowler', a3 == null ? null : ceilOvers(a3 / 5));
+    setNumber('c-bowler', bowlingCap(a3));
+    if (fields['c-bowler']) fields['c-bowler'].title = bowlingDescription(a3);
 
     // Table 4 — second-innings interruption.
     const da = timeMinutes('d-a'), db = timeMinutes('d-b'), dc = number('d-c'), dd = timeMinutes('d-d');
@@ -1059,7 +1070,8 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     setNumber('d-k', dk);
     const dl = dd == null || dk == null || dc == null ? null : dd + (dk - dc);
     setTime('d-l', dl);
-    setNumber('d-bowler', dj == null ? null : ceilOvers(dj / 5));
+    setNumber('d-bowler', bowlingCap(dj));
+    if (fields['d-bowler']) fields['d-bowler'].title = bowlingDescription(dj);
   };
   document.querySelectorAll('[data-calc]').forEach(el => {
     el.addEventListener('input', update);
