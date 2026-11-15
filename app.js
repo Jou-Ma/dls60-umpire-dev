@@ -960,3 +960,31 @@ clearControlErrors();
 updateReportAvailability();
 $('autoCalcStatus').textContent = 'Select a match type and enter the match details. Calculations update automatically.';
 if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true }), 900);
+\n\n// Version 2.0 Development prototype: top-level application tab navigation.
+const appTabButtons = Array.from(document.querySelectorAll('[data-app-tab]'));
+const appTabPanels = appTabButtons.map(button => document.getElementById(button.getAttribute('aria-controls')));
+function activateAppTab(name, moveFocus = false) {
+  appTabButtons.forEach((button, index) => {
+    const selected = button.dataset.appTab === name;
+    button.classList.toggle('active', selected);
+    button.setAttribute('aria-selected', String(selected));
+    button.tabIndex = selected ? 0 : -1;
+    if (selected && moveFocus) button.focus();
+    const panel = appTabPanels[index];
+    if (panel) panel.hidden = !selected;
+  });
+}
+appTabButtons.forEach((button, index) => {
+  button.addEventListener('click', () => activateAppTab(button.dataset.appTab));
+  button.addEventListener('keydown', event => {
+    let next = null;
+    if (event.key === 'ArrowRight') next = (index + 1) % appTabButtons.length;
+    if (event.key === 'ArrowLeft') next = (index - 1 + appTabButtons.length) % appTabButtons.length;
+    if (event.key === 'Home') next = 0;
+    if (event.key === 'End') next = appTabButtons.length - 1;
+    if (next !== null) {
+      event.preventDefault();
+      activateAppTab(appTabButtons[next].dataset.appTab, true);
+    }
+  });
+});
