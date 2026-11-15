@@ -737,8 +737,7 @@ $('exportCsv').addEventListener('click', () => {
   const header = ['Overs bowled', 'Overs remaining', ...Array.from({ length: 10 }, (_, i) => `${i} wickets`)];
   const lines = [header, ...rows.map(row => [row.oversBowled, row.oversRemaining, ...row.par])]
     .map(row => row.map(value => `"${String(value).replaceAll('"', '""')}"`).join(','));
-  downloadBlob(`${safeFilename(currentInput?.matchName)}-${$('exportCsv').dataset.table}-par-scores.csv`, lines.join('\r
-'), 'text/csv;charset=utf-8');
+  downloadBlob(`${safeFilename(currentInput?.matchName)}-${$('exportCsv').dataset.table}-par-scores.csv`, lines.join('\r\n'), 'text/csv;charset=utf-8');
 });
 
 const STORAGE_KEY = 'dls60-umpire-saved-v1';
@@ -760,7 +759,7 @@ function renderSaved() {
     const title = document.createElement('strong'); title.textContent = item.input.matchName || 'Unnamed match';
     const detail = document.createElement('small');
     const capturer = item.input.capturerFirstName || item.input.capturerSurname ? `Captured by ${`${item.input.capturerFirstName || ''} ${item.input.capturerSurname || ''}`.trim()} · ` : 'Capturer name required · ';
-    const uploadLabel = 'Development · local only';
+    const uploadLabel = item.uploadStatus === 'uploaded' ? 'Uploaded' : item.uploadStatus === 'error' ? 'Upload failed — retry pending' : 'Pending upload';
     detail.textContent = `${capturer}${item.input.matchTypeLabel || item.input.matchType || 'Match'} · ${item.input.firstRuns} runs · ${item.summary.noResult ? 'No result' : `target ${item.summary.target}`} · ${uploadLabel} · ${new Date(item.savedAt).toLocaleString()}`;
     info.append(title, detail);
     const actions = document.createElement('div'); actions.className = 'saved-actions';
@@ -769,9 +768,8 @@ function renderSaved() {
     actions.append(load, remove); row.append(info, actions); container.appendChild(row);
   }
 }
-// Private umpire-group archive endpoint. The shared upload code is intentionally
-// bundled for this small, trusted distribution group; it is not a confidential secret.
-const UPLOAD_CONFIG = Object.freeze({ endpoint: '', accessCode: '' }); // Development deployment: archive uploads deliberately disabled.
+// Development deployment: archive uploads deliberately disabled.
+const UPLOAD_CONFIG = Object.freeze({ endpoint: '', accessCode: '' });
 function getUploadConfig() { return UPLOAD_CONFIG; }
 function updateUploadSummary(message = '') {
   const saved = getSaved();
@@ -933,7 +931,7 @@ $('saveScenario').addEventListener('click', () => {
     saved.unshift(item);
     putSaved(saved.slice(0, 50));
     renderSaved();
-    $('saveMessage').textContent = 'Match saved on this device. Development archive uploads are disabled.';
+    $('saveMessage').textContent = 'Match saved on this device and added to the upload queue.';
     updateUploadSummary();
     if (navigator.onLine && getUploadConfig().endpoint) uploadPendingMatches({ automatic: true });
   } catch (error) { $('saveMessage').textContent = error.message; }
