@@ -1,0 +1,20 @@
+{
+  "id": "./",
+  "name": "DLS 6.0 Umpire Calculator — Development",
+  "short_name": "DLS 6.0 DEV",
+  "description": "Development deployment of the DLS 6.0 umpire calculator.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4f7fb",
+  "theme_color": "#10233f",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
