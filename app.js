@@ -1012,14 +1012,17 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     setNumber(`${prefix}-pp2`, values?.[1] ?? null);
     setNumber(`${prefix}-pp3`, values?.[2] ?? null);
   };
-  const bowlingCap = overs => {
-    if (overs == null || !Number.isFinite(overs)) return null;
+  // The source lookup is written as bowlers × overs; display it as overs × bowlers.
+  const bowlingDescription = overs => {
+    if (overs == null || !Number.isFinite(overs)) return '';
     const restriction = bowlingRestrictions[String(Math.trunc(overs))];
-    if (!restriction) return null;
-    const cap = Math.max(...Array.from(restriction.matchAll(/×\s*(\d+)/g), match => Number(match[1])));
-    return Number.isFinite(cap) ? cap : null;
+    if (!restriction) return 'Not specified';
+    return restriction.replace(/(\d+)\s*×\s*(\d+)/g, (_, bowlers, overLimit) => `${overLimit} × ${bowlers}`);
   };
-  const bowlingDescription = overs => overs == null ? '' : (bowlingRestrictions[String(Math.trunc(overs))] || 'Not specified in supplied table');
+  const setBowlingRestriction = (key, overs) => {
+    const field = fields[key];
+    if (field) field.value = bowlingDescription(overs);
+  };
   const ceilOvers = value => Math.ceil(value - 1e-10);
   const ceilMinutes = value => Math.ceil(value - 1e-10);
   const update = () => {
@@ -1033,8 +1036,7 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     setNumber('a-h', h, 2);
     const i = h == null ? null : ceilOvers(h / 2);
     setNumber('a-i', i);
-    setNumber('a-bowler', bowlingCap(i));
-    if (fields['a-bowler']) fields['a-bowler'].title = bowlingDescription(i);
+    setBowlingRestriction('a-bowler', i);
     setPowerplay('a', i);
 
     const j = timeMinutes('a-j'), m = number('a-m');
@@ -1067,8 +1069,7 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     const c3 = timeMinutes('c-c');
     const d3 = c3 == null || b3 == null ? null : c3 + b3;
     setTime('c-d', d3);
-    setNumber('c-bowler', bowlingCap(a3));
-    if (fields['c-bowler']) fields['c-bowler'].title = bowlingDescription(a3);
+    setBowlingRestriction('c-bowler', a3);
     setPowerplay('c', a3);
 
     // Table 4 — second-innings interruption.
@@ -1088,8 +1089,7 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     setNumber('d-k', dk);
     const dl = dd == null || dk == null || dc == null ? null : dd + (dk - dc);
     setTime('d-l', dl);
-    setNumber('d-bowler', bowlingCap(dj));
-    if (fields['d-bowler']) fields['d-bowler'].title = bowlingDescription(dj);
+    setBowlingRestriction('d-bowler', dj);
     setPowerplay('d', dj);
   };
   document.querySelectorAll('[data-calc]').forEach(el => {
