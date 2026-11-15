@@ -1060,6 +1060,9 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     const terminated = s != null && t != null && s <= t;
     const decision = fields['b-s']?.closest('tr');
     if (decision) decision.dataset.inningsDecision = s == null || t == null ? 'pending' : terminated ? 'terminated' : 'resume';
+    document.querySelectorAll('[data-decision-option]').forEach(option => {
+      option.classList.toggle('is-selected', s != null && t != null && option.dataset.decisionOption === (terminated ? 'terminated' : 'resume'));
+    });
 
     // Table 3 — when Table 2 determines that the first innings is terminated.
     const a3 = terminated ? s : null;
