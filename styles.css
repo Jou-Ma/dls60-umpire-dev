@@ -125,3 +125,6 @@
  .decision-notes,.help-grid{grid-template-columns:1fr}
  .calc-sheet{min-width:500px}
 }
+
+/* Highlight the applicable Appendix A Table 2 outcome after S and T are available. */
+.decision-notes p.is-selected{border:2px solid var(--navy2);background:#e8f0fb;color:var(--navy);font-weight:700;box-shadow:0 0 0 2px rgba(43,75,119,.08)}
