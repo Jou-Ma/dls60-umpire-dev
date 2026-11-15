@@ -30,9 +30,6 @@
     <nav class="app-tabs" role="tablist" aria-label="Application sections">
       <button class="app-tab active" id="tab-button-dls" type="button" role="tab" aria-selected="true" aria-controls="tab-dls" data-app-tab="dls">DLS 6.0</button>
       <button class="app-tab" id="tab-button-a" type="button" role="tab" aria-selected="false" aria-controls="tab-a" data-app-tab="a" tabindex="-1">Appendix A</button>
-      <button class="app-tab" id="tab-button-b" type="button" role="tab" aria-selected="false" aria-controls="tab-b" data-app-tab="b" tabindex="-1">Appendix B</button>
-      <button class="app-tab" id="tab-button-c" type="button" role="tab" aria-selected="false" aria-controls="tab-c" data-app-tab="c" tabindex="-1">Appendix C</button>
-      <button class="app-tab" id="tab-button-d" type="button" role="tab" aria-selected="false" aria-controls="tab-d" data-app-tab="d" tabindex="-1">Appendix D</button>
       <button class="app-tab" id="tab-button-help" type="button" role="tab" aria-selected="false" aria-controls="tab-help" data-app-tab="help" tabindex="-1">Help</button>
     </nav>
     <section class="app-tab-panel active" id="tab-dls" role="tabpanel" aria-labelledby="tab-button-dls">
@@ -222,7 +219,7 @@
           <tr><td>S</td><td>Potential overs to be bowled [R / 4.2] (round up fractions)</td><td><input data-calc="b-s" inputmode="numeric" placeholder="Overs" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
           <tr><td>T</td><td>Number of complete overs faced to date in first innings</td><td><input data-calc="b-t" inputmode="numeric" placeholder="Overs"></td></tr>
         </tbody></table></div>
-        <div class="decision-notes"><p><strong>If S is greater than T:</strong> Revert to Table 1.</p><p><strong>If S is less than or equal to T:</strong> The first innings is terminated — go to Table 3.</p></div>
+        <div class="decision-notes" aria-live="polite"><p data-decision-option="resume"><strong>If S is greater than T:</strong> Revert to Table 1.</p><p data-decision-option="terminated"><strong>If S is less than or equal to T:</strong> The first innings is terminated — go to Table 3.</p></div>
       </section>
       <section class="panel appendix-panel">
         <div class="panel-heading"><div><div class="step-label">TABLE 3</div><h2>Start of the Second Innings</h2><p class="panel-hint">Maximum overs to be bowled.</p></div></div>
@@ -260,21 +257,11 @@
       </section>
       <p class="appendix-footnote">Development calculation worksheet. Calculated fields update automatically from the supplied Appendix A formulas. Confirm the applicable Playing Conditions before using the outputs for a match.</p>
     </section>
-
-    <section class="app-tab-panel placeholder-panel" id="tab-b" role="tabpanel" aria-labelledby="tab-button-b" hidden>
-      <div class="appendix-heading"><div><div class="step-label">CALCULATION WORKFLOW</div><h1>Appendix B</h1><p class="panel-hint">This tab is reserved for the second calculation form. Its workflow will be added after the source form and applicable Playing Conditions are reviewed.</p></div><span class="tag">Awaiting source form</span></div>
-    </section>
-    <section class="app-tab-panel placeholder-panel" id="tab-c" role="tabpanel" aria-labelledby="tab-button-c" hidden>
-      <div class="appendix-heading"><div><div class="step-label">CALCULATION WORKFLOW</div><h1>Appendix C</h1><p class="panel-hint">This tab is reserved for the third calculation form. Its workflow will be added after the source form and applicable Playing Conditions are reviewed.</p></div><span class="tag">Awaiting source form</span></div>
-    </section>
-    <section class="app-tab-panel placeholder-panel" id="tab-d" role="tabpanel" aria-labelledby="tab-button-d" hidden>
-      <div class="appendix-heading"><div><div class="step-label">CALCULATION WORKFLOW</div><h1>Appendix D</h1><p class="panel-hint">This tab is reserved for the fourth calculation form. Its workflow will be added after the source form and applicable Playing Conditions are reviewed.</p></div><span class="tag">Awaiting source form</span></div>
-    </section>
     <section class="app-tab-panel placeholder-panel" id="tab-help" role="tabpanel" aria-labelledby="tab-button-help" hidden>
       <div class="appendix-heading"><div><div class="step-label">REFERENCE AND GUIDANCE</div><h1>Help</h1><p class="panel-hint">Guidance for using the calculator, understanding the Appendix workflows and reading DLS match reports will be organised here.</p></div></div>
       <div class="help-grid">
         <article class="panel"><h2>Using the calculator</h2><p>Step-by-step guidance for match setup, interruption entry and calculating revised targets.</p></article>
-        <article class="panel"><h2>Appendix calculations</h2><p>Explanations of the inputs, formulas, decision points and outputs for Appendices A–D.</p></article>
+        <article class="panel"><h2>Appendix calculations</h2><p>Explanations of the inputs, formulas, decision points and outputs for Tables 1–4 in Appendix A.</p></article>
         <article class="panel"><h2>DLS match reports</h2><p>Explanations of report sections, figures, terminology and match outcomes.</p></article>
         <article class="panel"><h2>Playing Conditions</h2><p>Guidance on selecting the applicable competition Playing Conditions. The relevant source rules remain authoritative.</p></article>
       </div>
