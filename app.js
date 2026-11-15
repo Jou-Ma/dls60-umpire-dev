@@ -983,7 +983,7 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
   };
   const timeMinutes = key => {
     const value = fields[key]?.value;
-    if (!value || !/^\\d{2}:\\d{2}$/.test(value)) return null;
+    if (!value || !/^\d{2}:\d{2}$/.test(value)) return null;
     const [hours, minutes] = value.split(':').map(Number);
     return hours * 60 + minutes;
   };
