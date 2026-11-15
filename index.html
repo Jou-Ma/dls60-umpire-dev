@@ -25,7 +25,17 @@
     </div>
   </header>
 
-  <main class="app-shell">
+  <main class="app-shell">\n
+    <nav class="app-tabs" role="tablist" aria-label="Application sections">
+      <button class="app-tab active" id="tab-button-dls" type="button" role="tab" aria-selected="true" aria-controls="tab-dls" data-app-tab="dls">DLS 6.0</button>
+      <button class="app-tab" id="tab-button-a" type="button" role="tab" aria-selected="false" aria-controls="tab-a" data-app-tab="a" tabindex="-1">Appendix A</button>
+      <button class="app-tab" id="tab-button-b" type="button" role="tab" aria-selected="false" aria-controls="tab-b" data-app-tab="b" tabindex="-1">Appendix B</button>
+      <button class="app-tab" id="tab-button-c" type="button" role="tab" aria-selected="false" aria-controls="tab-c" data-app-tab="c" tabindex="-1">Appendix C</button>
+      <button class="app-tab" id="tab-button-d" type="button" role="tab" aria-selected="false" aria-controls="tab-d" data-app-tab="d" tabindex="-1">Appendix D</button>
+      <button class="app-tab" id="tab-button-help" type="button" role="tab" aria-selected="false" aria-controls="tab-help" data-app-tab="help" tabindex="-1">Help</button>
+    </nav>
+    <section class="app-tab-panel active" id="tab-dls" role="tabpanel" aria-labelledby="tab-button-dls">
+
     <form id="matchForm" novalidate>
       <section class="panel match-panel">
         <div class="panel-heading">
@@ -168,7 +178,106 @@
       <strong>DEVELOPMENT ENVIRONMENT:</strong> Based on Version 1.0 · Build 0.5.4. The browser engine has been compared with selected outputs from the supplied ICC DLS 6.0 application, including multi-interruption cases and over-by-over / ball-by-ball tables. These are targeted validation scenarios, not exhaustive verification of every possible input combination. For official match decisions, use the authorised DLS application and follow the applicable playing conditions.
       <p>DLS is proprietary. This independent tool is not an ICC product and is not certified, endorsed or approved by the ICC. No official DLS software or JAR is distributed with this application.</p>
     </section>
-  </main>
+    </section>\n\n    <section class="app-tab-panel" id="tab-a" role="tabpanel" aria-labelledby="tab-button-a" hidden>
+      <div class="appendix-heading">
+        <div><div class="step-label">TIME-BASED CALCULATIONS</div><h1>Appendix A</h1><p class="panel-hint">Calculation sheets for delays and interruptions. This is the initial Development layout; calculation behaviour will be implemented after the four forms and applicable Playing Conditions have been reviewed.</p></div>
+        <span class="tag">Draft layout</span>
+      </div>
+      <section class="panel appendix-panel">
+        <div class="panel-heading"><div><div class="step-label">TABLE 1</div><h2>First-innings delay or interruptions</h2><p class="panel-hint">Use when a delay or interruption occurs during the First Innings.</p></div></div>
+        <h3 class="calc-group-title">Time</h3>
+        <div class="calc-table-wrap"><table class="calc-sheet"><thead><tr><th>Ref.</th><th>Calculation / description</th><th>Entry</th></tr></thead><tbody>
+          <tr><td>A</td><td>Net playing time available at start of the match</td><td><input value="420" readonly aria-label="A: Net playing time available at start of match"><span>minutes</span></td></tr>
+          <tr><td>B</td><td>Time innings in progress</td><td><input data-calc="a-b" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>C</td><td>Playing time lost</td><td><input data-calc="a-c" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>D</td><td>Extra time available</td><td><input data-calc="a-d" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>E</td><td>Time made up from reduced interval</td><td><input data-calc="a-e" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>F</td><td>Effective playing time lost [C – (D + E)]</td><td><input data-calc="a-f" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>G</td><td>Remaining playing time available (A - F)</td><td><input data-calc="a-g" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>H</td><td>G divided by 4.2 (to 2 decimal places)</td><td><input data-calc="a-h" inputmode="decimal" placeholder="Overs"></td></tr>
+          <tr><td>I</td><td>Max overs per team [H/2] (round up fractions)</td><td><input data-calc="a-i" inputmode="numeric" placeholder="Overs"></td></tr>
+          <tr><td></td><td>Maximum overs per bowler [I / 5]</td><td><input data-calc="a-bowler" inputmode="numeric" placeholder="Overs"></td></tr>
+          <tr><td></td><td>Duration of Powerplay Overs (initial, batting side)</td><td class="split-entry"><input data-calc="a-pp1" aria-label="Powerplay overs first value"><span>+</span><input data-calc="a-pp2" aria-label="Powerplay overs second value"></td></tr>
+        </tbody></table></div>
+        <h3 class="calc-group-title">Rescheduled playing hours</h3>
+        <div class="calc-table-wrap"><table class="calc-sheet"><thead><tr><th>Ref.</th><th>Calculation / description</th><th>Entry</th></tr></thead><tbody>
+          <tr><td>J</td><td>First session to commence or recommence</td><td><input data-calc="a-j" type="time"></td></tr>
+          <tr><td>K</td><td>Length of innings [I x 4.2] (round up fractions)</td><td><input data-calc="a-k" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>L</td><td>Rescheduled first innings cessation time [J + (K – B)]</td><td><input data-calc="a-l" type="time"></td></tr>
+          <tr><td>M</td><td>Length of interval</td><td><input data-calc="a-m" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>N</td><td>Second innings commencement time [L + M]</td><td><input data-calc="a-n" type="time"></td></tr>
+          <tr><td>O</td><td>Rescheduled second innings cessation time [N + K]</td><td><input data-calc="a-o" type="time"></td></tr>
+        </tbody></table></div>
+        <p class="appendix-warning">Ensure that the match is not finishing earlier than the original or rescheduled cessation time by applying clause 13.7.2. If so, add at least one over to each team and recalculate (I) to (O) above to prevent this from happening.</p>
+      </section>
+      <section class="panel appendix-panel">
+        <div class="panel-heading"><div><div class="step-label">TABLE 2</div><h2>Check whether a First Innings should be terminated</h2><p class="panel-hint">Use when an interruption occurs during the First Innings.</p></div></div>
+        <div class="calc-table-wrap"><table class="calc-sheet"><thead><tr><th>Ref.</th><th>Calculation / description</th><th>Entry</th></tr></thead><tbody>
+          <tr><td>P</td><td>Proposed re-start time</td><td><input data-calc="b-p" type="time"></td></tr>
+          <tr><td>Q</td><td>Rescheduled cut-off time allowing for full use of any extra time provision</td><td><input data-calc="b-q" type="time"></td></tr>
+          <tr><td>R</td><td>Minutes between P and Q</td><td><input data-calc="b-r" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>S</td><td>Potential overs to be bowled [R / 4.2] (round up fractions)</td><td><input data-calc="b-s" inputmode="numeric" placeholder="Overs"></td></tr>
+          <tr><td>T</td><td>Number of complete overs faced to date in first innings</td><td><input data-calc="b-t" inputmode="numeric" placeholder="Overs"></td></tr>
+        </tbody></table></div>
+        <div class="decision-notes"><p><strong>If S is greater than T:</strong> Revert to Table 1.</p><p><strong>If S is less than or equal to T:</strong> The first innings is terminated — go to Table 3.</p></div>
+      </section>
+      <section class="panel appendix-panel">
+        <div class="panel-heading"><div><div class="step-label">TABLE 3</div><h2>Start of the Second Innings</h2><p class="panel-hint">Maximum overs to be bowled.</p></div></div>
+        <div class="calc-table-wrap"><table class="calc-sheet"><thead><tr><th>Ref.</th><th>Calculation / description</th><th>Entry</th></tr></thead><tbody>
+          <tr><td>A</td><td>Maximum overs to be bowled (if first innings was terminated, S from Table 2)</td><td><input data-calc="c-a" inputmode="numeric" placeholder="Overs"></td></tr>
+          <tr><td>B</td><td>Scheduled length of innings: [A x 4.2] (round up fractions)</td><td><input data-calc="c-b" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>C</td><td>Start time</td><td><input data-calc="c-c" type="time"></td></tr>
+          <tr><td>D</td><td>Scheduled cessation time [C + B]</td><td><input data-calc="c-d" type="time"></td></tr>
+          <tr><td></td><td>Maximum overs per bowler [A / 5]</td><td><input data-calc="c-bowler" inputmode="numeric" placeholder="Overs"></td></tr>
+          <tr><td></td><td>Duration of Powerplay overs (initial, batting side)</td><td class="split-entry"><input data-calc="c-pp1" aria-label="Powerplay overs first value"><span>+</span><input data-calc="c-pp2" aria-label="Powerplay overs second value"></td></tr>
+        </tbody></table></div>
+      </section>
+      <section class="panel appendix-panel">
+        <div class="panel-heading"><div><div class="step-label">TABLE 4</div><h2>Interruption after the start of the Second Innings</h2><p class="panel-hint">Time and overs calculations.</p></div></div>
+        <h3 class="calc-group-title">Time</h3>
+        <div class="calc-table-wrap"><table class="calc-sheet"><thead><tr><th>Ref.</th><th>Calculation / description</th><th>Entry</th></tr></thead><tbody>
+          <tr><td>A</td><td>Time at start of innings</td><td><input data-calc="d-a" type="time"></td></tr>
+          <tr><td>B</td><td>Time at start of interruption</td><td><input data-calc="d-b" type="time"></td></tr>
+          <tr><td>C</td><td>Time innings in progress</td><td><input data-calc="d-c" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>D</td><td>Restart time</td><td><input data-calc="d-d" type="time"></td></tr>
+          <tr><td>E</td><td>Length of interruption [D – B]</td><td><input data-calc="d-e" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>F</td><td>Additional time available (any unused provision for ‘Extra Time’ or for earlier than scheduled start of second innings)</td><td><input data-calc="d-f" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>G</td><td>Total playing time lost [E – F]</td><td><input data-calc="d-g" inputmode="numeric" placeholder="Minutes"></td></tr>
+        </tbody></table></div>
+        <h3 class="calc-group-title">Overs</h3>
+        <div class="calc-table-wrap"><table class="calc-sheet"><thead><tr><th>Ref.</th><th>Calculation / description</th><th>Entry</th></tr></thead><tbody>
+          <tr><td>H</td><td>Maximum overs at start of innings</td><td><input data-calc="d-h" inputmode="numeric" placeholder="Overs"></td></tr>
+          <tr><td>I</td><td>Overs lost [G / 4.2] (rounded down)</td><td><input data-calc="d-i" inputmode="numeric" placeholder="Overs"></td></tr>
+          <tr><td>J</td><td>Adjusted maximum length of innings [H – I]</td><td><input data-calc="d-j" inputmode="numeric" placeholder="Overs"></td></tr>
+          <tr><td>K</td><td>Rescheduled length of innings [J x 4.2 rounded up]</td><td><input data-calc="d-k" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>L</td><td>Amended cessation time of innings [D + (K – C)]</td><td><input data-calc="d-l" type="time"></td></tr>
+          <tr><td></td><td>Maximum overs per bowler [J / 5]</td><td><input data-calc="d-bowler" inputmode="numeric" placeholder="Overs"></td></tr>
+          <tr><td></td><td>Duration of Powerplay overs (initial, batting side)</td><td class="split-entry"><input data-calc="d-pp1" aria-label="Powerplay overs first value"><span>+</span><input data-calc="d-pp2" aria-label="Powerplay overs second value"></td></tr>
+        </tbody></table></div>
+      </section>
+      <p class="appendix-footnote">Development prototype only. Entries are not yet calculated or saved. Formula automation, validation, Playing Conditions selection and report output will be specified and tested before any release.</p>
+    </section>
+
+    <section class="app-tab-panel placeholder-panel" id="tab-b" role="tabpanel" aria-labelledby="tab-button-b" hidden>
+      <div class="appendix-heading"><div><div class="step-label">CALCULATION WORKFLOW</div><h1>Appendix B</h1><p class="panel-hint">This tab is reserved for the second calculation form. Its workflow will be added after the source form and applicable Playing Conditions are reviewed.</p></div><span class="tag">Awaiting source form</span></div>
+    </section>
+    <section class="app-tab-panel placeholder-panel" id="tab-c" role="tabpanel" aria-labelledby="tab-button-c" hidden>
+      <div class="appendix-heading"><div><div class="step-label">CALCULATION WORKFLOW</div><h1>Appendix C</h1><p class="panel-hint">This tab is reserved for the third calculation form. Its workflow will be added after the source form and applicable Playing Conditions are reviewed.</p></div><span class="tag">Awaiting source form</span></div>
+    </section>
+    <section class="app-tab-panel placeholder-panel" id="tab-d" role="tabpanel" aria-labelledby="tab-button-d" hidden>
+      <div class="appendix-heading"><div><div class="step-label">CALCULATION WORKFLOW</div><h1>Appendix D</h1><p class="panel-hint">This tab is reserved for the fourth calculation form. Its workflow will be added after the source form and applicable Playing Conditions are reviewed.</p></div><span class="tag">Awaiting source form</span></div>
+    </section>
+    <section class="app-tab-panel placeholder-panel" id="tab-help" role="tabpanel" aria-labelledby="tab-button-help" hidden>
+      <div class="appendix-heading"><div><div class="step-label">REFERENCE AND GUIDANCE</div><h1>Help</h1><p class="panel-hint">Guidance for using the calculator, understanding the Appendix workflows and reading DLS match reports will be organised here.</p></div></div>
+      <div class="help-grid">
+        <article class="panel"><h2>Using the calculator</h2><p>Step-by-step guidance for match setup, interruption entry and calculating revised targets.</p></article>
+        <article class="panel"><h2>Appendix calculations</h2><p>Explanations of the inputs, formulas, decision points and outputs for Appendices A–D.</p></article>
+        <article class="panel"><h2>DLS match reports</h2><p>Explanations of report sections, figures, terminology and match outcomes.</p></article>
+        <article class="panel"><h2>Playing Conditions</h2><p>Guidance on selecting the applicable competition Playing Conditions. The relevant source rules remain authoritative.</p></article>
+      </div>
+      <p class="appendix-footnote">Help content is a placeholder and will be completed alongside the calculation workflows.</p>
+    </section>
+\n  </main>
   <footer class="footer"><span>DLS 6.0 · Offline-first umpire tool</span><span id="appVersion">DEVELOPMENT · based on Build 0.5.4</span></footer>
   <script type="module" src="app.js"></script>
 </body>
