@@ -1012,12 +1012,12 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     setNumber(`${prefix}-pp2`, values?.[1] ?? null);
     setNumber(`${prefix}-pp3`, values?.[2] ?? null);
   };
-  // The source lookup is written as bowlers × overs; display it as overs × bowlers.
+  // Display the lookup in the supplied order: bowlers × overs per bowler.
   const bowlingDescription = overs => {
     if (overs == null || !Number.isFinite(overs)) return '';
     const restriction = bowlingRestrictions[String(Math.trunc(overs))];
     if (!restriction) return 'Not specified';
-    return restriction.replace(/(\d+)\s*×\s*(\d+)/g, (_, bowlers, overLimit) => `${overLimit} × ${bowlers}`);
+    return restriction;
   };
   const setBowlingRestriction = (key, overs) => {
     const field = fields[key];
