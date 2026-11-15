@@ -996,6 +996,22 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
       String(wrapped % 60).padStart(2, '0');
   };
   const bowlingRestrictions = {"5":"2 × 2, 1 × 1","6":"3 × 2","7":"3 × 2, 1 × 1","8":"4 × 2","9":"4 × 2, 1 × 1","10":"5 × 2","11":"1 × 3, 4 × 2","12":"2 × 3, 3 × 2","13":"3 × 3, 2 × 2","14":"4 × 3, 1 × 2","15":"5 × 3","16":"1 × 4, 4 × 3","17":"2 × 4, 3 × 3","18":"3 × 4, 2 × 3","19":"4 × 4, 1 × 3","20":"5 × 4","21":"1 × 5, 4 × 4","22":"2 × 5, 3 × 4","23":"3 × 5, 2 × 4","24":"4 × 5, 1 × 4","25":"5 × 5","26":"1 × 6, 4 × 5","27":"2 × 6, 3 × 5","28":"3 × 6, 2 × 5","29":"4 × 6, 1 × 5","30":"5 × 6","31":"1 × 7, 4 × 6","32":"2 × 7, 3 × 6","33":"3 × 7, 2 × 6","34":"4 × 7, 1 × 6","35":"5 × 7","36":"1 × 8, 4 × 7","37":"2 × 8, 3 × 7","38":"3 × 8, 2 × 7","39":"4 × 8, 1 × 7","40":"5 × 8","41":"1 × 9, 4 × 8","42":"2 × 9, 3 × 8","43":"3 × 9, 2 × 8","44":"4 × 9, 1 × 8","45":"5 × 9","46":"1 × 10, 4 × 9","47":"2 × 10, 3 × 9","48":"3 × 10, 2 × 9","49":"4 × 10, 1 × 9","50":"5 × 10"};
+  // ICC Playing Conditions Powerplay allocation lookup supplied for the worksheet.
+  // Values are [Powerplay 1, Powerplay 2, Powerplay 3] and total the available overs.
+  const powerplayAllocations = {
+    20:[4,12,4],21:[4,13,4],22:[5,13,4],23:[5,14,4],24:[5,14,5],25:[5,15,5],
+    26:[5,16,5],27:[6,16,5],28:[6,17,5],29:[6,17,6],30:[6,18,6],
+    31:[6,19,6],32:[7,19,6],33:[7,20,6],34:[7,20,7],35:[7,21,7],
+    36:[7,22,7],37:[8,22,7],38:[8,23,7],39:[8,23,8],40:[8,24,8],
+    41:[8,25,8],42:[9,25,8],43:[9,26,8],44:[9,26,9],45:[9,27,9],
+    46:[9,28,9],47:[10,28,9],48:[10,29,9],49:[10,29,10],50:[10,30,10]
+  };
+  const setPowerplay = (prefix, overs) => {
+    const values = overs == null ? null : powerplayAllocations[String(Math.trunc(overs))];
+    setNumber(`${prefix}-pp1`, values?.[0] ?? null);
+    setNumber(`${prefix}-pp2`, values?.[1] ?? null);
+    setNumber(`${prefix}-pp3`, values?.[2] ?? null);
+  };
   const bowlingCap = overs => {
     if (overs == null || !Number.isFinite(overs)) return null;
     const restriction = bowlingRestrictions[String(Math.trunc(overs))];
@@ -1019,6 +1035,7 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     setNumber('a-i', i);
     setNumber('a-bowler', bowlingCap(i));
     if (fields['a-bowler']) fields['a-bowler'].title = bowlingDescription(i);
+    setPowerplay('a', i);
 
     const j = timeMinutes('a-j'), m = number('a-m');
     const k = i == null ? null : ceilMinutes(i * 4.2);
@@ -1052,6 +1069,7 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     setTime('c-d', d3);
     setNumber('c-bowler', bowlingCap(a3));
     if (fields['c-bowler']) fields['c-bowler'].title = bowlingDescription(a3);
+    setPowerplay('c', a3);
 
     // Table 4 — second-innings interruption.
     const da = timeMinutes('d-a'), db = timeMinutes('d-b'), dc = number('d-c'), dd = timeMinutes('d-d');
@@ -1072,6 +1090,7 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     setTime('d-l', dl);
     setNumber('d-bowler', bowlingCap(dj));
     if (fields['d-bowler']) fields['d-bowler'].title = bowlingDescription(dj);
+    setPowerplay('d', dj);
   };
   document.querySelectorAll('[data-calc]').forEach(el => {
     el.addEventListener('input', update);
