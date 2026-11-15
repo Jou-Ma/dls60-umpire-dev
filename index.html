@@ -200,7 +200,7 @@
           <tr><td>H</td><td>G divided by 4.2 (to 2 decimal places)</td><td><input data-calc="a-h" inputmode="decimal" placeholder="Overs" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
           <tr><td>I</td><td>Max overs per team [H/2] (round up fractions)</td><td><input data-calc="a-i" inputmode="numeric" placeholder="Overs" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
           <tr><td></td><td>Maximum overs per bowler (bowling restrictions lookup)</td><td><input data-calc="a-bowler" inputmode="numeric" placeholder="Overs" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td></td><td>Duration of Powerplay Overs (initial, batting side)</td><td class="split-entry"><input data-calc="a-pp1" aria-label="Powerplay overs first value"><span>+</span><input data-calc="a-pp2" aria-label="Powerplay overs second value"></td></tr>
+          <tr><td></td><td>Duration of Powerplay Overs (initial, batting side)</td><td class="split-entry powerplay-entry"><input data-calc="a-pp1" aria-label="Powerplay 1 overs" readonly aria-readonly="true" placeholder="P1"><span>+</span><input data-calc="a-pp2" aria-label="Powerplay 2 overs" readonly aria-readonly="true" placeholder="P2"><span>+</span><input data-calc="a-pp3" aria-label="Powerplay 3 overs" readonly aria-readonly="true" placeholder="P3"></td></tr>
         </tbody></table></div>
         <h3 class="calc-group-title">Rescheduled playing hours</h3>
         <div class="calc-table-wrap"><table class="calc-sheet"><thead><tr><th>Ref.</th><th>Calculation / description</th><th>Entry</th></tr></thead><tbody>
@@ -232,7 +232,7 @@
           <tr><td>C</td><td>Start time</td><td><input data-calc="c-c" type="time"></td></tr>
           <tr><td>D</td><td>Scheduled cessation time [C + B]</td><td><input data-calc="c-d" type="time" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
           <tr><td></td><td>Maximum overs per bowler (bowling restrictions lookup)</td><td><input data-calc="c-bowler" inputmode="numeric" placeholder="Overs" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td></td><td>Duration of Powerplay overs (initial, batting side)</td><td class="split-entry"><input data-calc="c-pp1" aria-label="Powerplay overs first value"><span>+</span><input data-calc="c-pp2" aria-label="Powerplay overs second value"></td></tr>
+          <tr><td></td><td>Duration of Powerplay overs (initial, batting side)</td><td class="split-entry powerplay-entry"><input data-calc="c-pp1" aria-label="Powerplay 1 overs" readonly aria-readonly="true" placeholder="P1"><span>+</span><input data-calc="c-pp2" aria-label="Powerplay 2 overs" readonly aria-readonly="true" placeholder="P2"><span>+</span><input data-calc="c-pp3" aria-label="Powerplay 3 overs" readonly aria-readonly="true" placeholder="P3"></td></tr>
         </tbody></table></div>
       </section>
       <section class="panel appendix-panel">
@@ -255,7 +255,7 @@
           <tr><td>K</td><td>Rescheduled length of innings [J x 4.2 rounded up]</td><td><input data-calc="d-k" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
           <tr><td>L</td><td>Amended cessation time of innings [D + (K – C)]</td><td><input data-calc="d-l" type="time" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
           <tr><td></td><td>Maximum overs per bowler (bowling restrictions lookup)</td><td><input data-calc="d-bowler" inputmode="numeric" placeholder="Overs" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td></td><td>Duration of Powerplay overs (initial, batting side)</td><td class="split-entry"><input data-calc="d-pp1" aria-label="Powerplay overs first value"><span>+</span><input data-calc="d-pp2" aria-label="Powerplay overs second value"></td></tr>
+          <tr><td></td><td>Duration of Powerplay overs (initial, batting side)</td><td class="split-entry powerplay-entry"><input data-calc="d-pp1" aria-label="Powerplay 1 overs" readonly aria-readonly="true" placeholder="P1"><span>+</span><input data-calc="d-pp2" aria-label="Powerplay 2 overs" readonly aria-readonly="true" placeholder="P2"><span>+</span><input data-calc="d-pp3" aria-label="Powerplay 3 overs" readonly aria-readonly="true" placeholder="P3"></td></tr>
         </tbody></table></div>
       </section>
       <p class="appendix-footnote">Development calculation worksheet. Calculated fields update automatically from the supplied Appendix A formulas. Confirm the applicable Playing Conditions before using the outputs for a match.</p>
