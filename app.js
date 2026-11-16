@@ -1010,6 +1010,15 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     40:[8,24,8],41:[8,25,8],42:[9,25,8],43:[9,26,8],44:[9,26,9],
     45:[9,27,9]
   };
+  const mensPremierPowerplays = {
+    20:[4,12,4],21:[4,13,4],22:[5,13,4],23:[5,14,4],24:[5,14,5],
+    25:[5,15,5],26:[5,16,5],27:[6,16,5],28:[6,17,5],29:[6,17,6],
+    30:[6,18,6],31:[6,19,6],32:[7,19,6],33:[7,20,6],34:[7,20,7],
+    35:[7,21,7],36:[7,22,7],37:[8,22,7],38:[8,23,7],39:[8,23,8],
+    40:[8,24,8],41:[8,25,8],42:[9,25,8],43:[9,26,8],44:[9,26,9],
+    45:[9,27,9],46:[9,28,9],47:[10,28,9],48:[10,29,9],49:[10,29,10],
+    50:[10,30,10]
+  };
   const formatCricketOvers = balls => `${Math.floor(balls / 6)}.${balls % 6}`;
   const setPowerplay = (prefix, overs) => {
     const competition = competitionSelect?.value || '';
@@ -1035,7 +1044,7 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     } else if (competition === 'mens-premier') {
       phases = 3;
       description = 'Powerplay allocation (PP1 + PP2 + PP3)';
-      if (totalOvers === 50) values = [10, 30, 10];
+      values = totalOvers == null ? null : mensPremierPowerplays[totalOvers] || null;
     }
 
     const row = fields[`${prefix}-pp1`]?.closest('tr');
