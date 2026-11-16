@@ -1025,14 +1025,48 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
   };
   const ceilOvers = value => Math.ceil(value - 1e-10);
   const ceilMinutes = value => Math.ceil(value - 1e-10);
+  const competitionSelect = document.getElementById('overCalcCompetition');
+  const timePerOverField = document.getElementById('timePerOver');
+  const timePerOverHelp = document.getElementById('timePerOverHelp');
+  const competitionRates = {
+    't20': 4.25,
+    'promotion-45': 3.75,
+    'womens-35': 3.75,
+    'womens-t20': 3.75,
+    'mens-premier': 4.2
+  };
+  const selectedTimePerOver = () => {
+    const value = Number(timePerOverField?.value);
+    return timePerOverField?.value?.trim() && Number.isFinite(value) && value > 0 ? value : null;
+  };
+  const updateCompetitionRate = () => {
+    const competition = competitionSelect?.value || '';
+    const isOther = competition === 'other';
+    if (timePerOverField) {
+      timePerOverField.readOnly = !isOther;
+      if (Object.prototype.hasOwnProperty.call(competitionRates, competition)) {
+        timePerOverField.value = String(competitionRates[competition]);
+      } else {
+        timePerOverField.value = '';
+      }
+      timePerOverField.placeholder = isOther ? 'Enter minutes per over' : 'Select a competition';
+    }
+    if (timePerOverHelp) {
+      timePerOverHelp.textContent = isOther
+        ? 'Enter the applicable time allowance in minutes per over.'
+        : 'Automatically populated from the selected competition. Select Other to enter a value.';
+    }
+    update();
+  };
   const update = () => {
+    const timePerOver = selectedTimePerOver();
     // Table 1 — first-innings interruption.
     const a = number('a-a'), b = number('a-b'), c = number('a-c'), d = number('a-d'), e = number('a-e');
     const f = c == null || d == null || e == null ? null : c - (d + e);
     setNumber('a-f', f);
     const g = a == null || f == null ? null : a - f;
     setNumber('a-g', g);
-    const h = g == null ? null : Number((g / 4.2).toFixed(2));
+    const h = g == null || timePerOver == null ? null : Number((g / timePerOver).toFixed(2));
     setNumber('a-h', h, 2);
     const i = h == null ? null : ceilOvers(h / 2);
     setNumber('a-i', i);
@@ -1040,7 +1074,7 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     setPowerplay('a', i);
 
     const j = timeMinutes('a-j'), m = number('a-m');
-    const k = i == null ? null : ceilMinutes(i * 4.2);
+    const k = i == null || timePerOver == null ? null : ceilMinutes(i * timePerOver);
     setNumber('a-k', k);
     const l = j == null || k == null || b == null ? null : j + (k - b);
     setTime('a-l', l);
@@ -1054,7 +1088,7 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     let r = null;
     if (p != null && q != null) r = ((q - p) + 1440) % 1440;
     setNumber('b-r', r);
-    const s = r == null ? null : ceilOvers(r / 4.2);
+    const s = r == null || timePerOver == null ? null : ceilOvers(r / timePerOver);
     setNumber('b-s', s);
     const t = number('b-t');
     const terminated = s != null && t != null && s <= t;
@@ -1067,7 +1101,7 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     // Table 3 — when Table 2 determines that the first innings is terminated.
     const a3 = terminated ? s : null;
     setNumber('c-a', a3);
-    const b3 = a3 == null ? null : ceilMinutes(a3 * 4.2);
+    const b3 = a3 == null || timePerOver == null ? null : ceilMinutes(a3 * timePerOver);
     setNumber('c-b', b3);
     const c3 = timeMinutes('c-c');
     const d3 = c3 == null || b3 == null ? null : c3 + b3;
@@ -1084,17 +1118,22 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     const dg = de == null || df == null ? null : de - df;
     setNumber('d-g', dg);
     const dh = number('d-h');
-    const di = dg == null ? null : Math.floor(dg / 4.2 + 1e-10);
+    const di = dg == null || timePerOver == null ? null : Math.floor(dg / timePerOver + 1e-10);
     setNumber('d-i', di);
     const dj = dh == null || di == null ? null : dh - di;
     setNumber('d-j', dj);
-    const dk = dj == null ? null : ceilMinutes(dj * 4.2);
+    const dk = dj == null || timePerOver == null ? null : ceilMinutes(dj * timePerOver);
     setNumber('d-k', dk);
     const dl = dd == null || dk == null || dc == null ? null : dd + (dk - dc);
     setTime('d-l', dl);
     setBowlingRestriction('d-bowler', dj);
     setPowerplay('d', dj);
   };
+  if (competitionSelect) competitionSelect.addEventListener('change', updateCompetitionRate);
+  if (timePerOverField) {
+    timePerOverField.addEventListener('input', update);
+    timePerOverField.addEventListener('change', update);
+  }
   const resetButton = document.getElementById('resetAppendixA');
   if (resetButton) resetButton.addEventListener('click', () => {
     document.querySelectorAll('[data-calc]').forEach(el => { el.value = ''; });
@@ -1104,7 +1143,7 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     el.addEventListener('input', update);
     el.addEventListener('change', update);
   });
-  update();
+  updateCompetitionRate();
 })();
 
 // Version 2.0 Development prototype: top-level application tab navigation.
