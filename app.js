@@ -174,7 +174,7 @@ function applyMatchType(type, { presetOvers = true, preserveOtherMinimum = false
   rateField.readOnly = selected && !rateIsEditable;
   rateField.required = selected;
   $('timePerOverModeLabel').textContent = hasKnownRate ? 'fixed by match type' : (selected ? 'editable playing condition' : '');
-  $('timePerOverHelp').textContent = hasKnownRate
+  $('dlsTimePerOverHelp').textContent = hasKnownRate
     ? 'Preset rate. This value is independent of the Appendix A worksheet.'
     : 'No preset rate is defined. Enter the applicable playing-condition allowance; this remains independent of Appendix A.';
   $('minimumOversModeLabel').textContent = isFixedMinimum ? 'fixed by match type' : 'editable playing condition';
