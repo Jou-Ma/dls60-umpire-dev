@@ -1089,23 +1089,28 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     return timePerOverField?.value?.trim() && Number.isFinite(value) && value > 0 ? value : null;
   };
   const updateCompetitionGate = () => {
-    const selected = !!competitionSelect?.value;
+    const competition = competitionSelect?.value || '';
+    const selected = !!competition;
+    const customRate = Number(timePerOverField?.value);
+    const ready = selected && (competition !== 'other' ||
+      (timePerOverField?.value?.trim() && Number.isFinite(customRate) && customRate > 0));
     const gateHelp = document.getElementById('overCalcGateHelp');
     document.querySelectorAll('[data-calc]').forEach(field => {
-      field.disabled = !selected;
+      field.disabled = !ready;
     });
     const scenarioSourceField = document.getElementById('scenarioCessationSource');
     const scenarioEarliestField = document.getElementById('scenarioEarliestRestart');
-    if (scenarioSourceField) scenarioSourceField.disabled = !selected;
-    if (scenarioEarliestField) scenarioEarliestField.disabled = !selected;
-    if (gateHelp) gateHelp.textContent = selected
-      ? 'Match type selected. Worksheet inputs are now available.'
-      : 'Competition / match type selection is required before proceeding.';
+    if (scenarioSourceField) scenarioSourceField.disabled = !ready;
+    if (scenarioEarliestField) scenarioEarliestField.disabled = !ready;
+    if (gateHelp) gateHelp.textContent = !selected
+      ? 'Competition / match type selection is required before proceeding.'
+      : ready
+        ? 'Match type and time allowance confirmed. Worksheet inputs are now available.'
+        : 'Enter a valid Time per Over above to unlock the worksheet.';
   };
   const updateCompetitionRate = () => {
     const competition = competitionSelect?.value || '';
     const isOther = competition === 'other';
-    updateCompetitionGate();
     if (timePerOverField) {
       timePerOverField.readOnly = !isOther;
       if (Object.prototype.hasOwnProperty.call(competitionRates, competition)) {
@@ -1117,9 +1122,10 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     }
     if (timePerOverHelp) {
       timePerOverHelp.textContent = isOther
-        ? 'Enter the applicable time allowance in minutes per over.'
+        ? 'Enter the applicable time allowance in minutes per over. The worksheet unlocks once a valid value is entered.'
         : 'Automatically populated from the selected competition. Select Other to enter a value.';
     }
+    updateCompetitionGate();
     update();
   };
   const update = () => {
@@ -1213,8 +1219,8 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
   };
   if (competitionSelect) competitionSelect.addEventListener('change', updateCompetitionRate);
   if (timePerOverField) {
-    timePerOverField.addEventListener('input', update);
-    timePerOverField.addEventListener('change', update);
+    timePerOverField.addEventListener('input', () => { updateCompetitionGate(); update(); });
+    timePerOverField.addEventListener('change', () => { updateCompetitionGate(); update(); });
   }
   const scenarioSource = document.getElementById('scenarioCessationSource');
   const scenarioEarliest = document.getElementById('scenarioEarliestRestart');
