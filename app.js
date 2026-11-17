@@ -550,11 +550,7 @@ function renderTable(type) {
 }
 
 document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => renderTable(tab.dataset.table)));
-$('matchForm').addEventListener('submit', (event) => {
-  event.preventDefault();
-  validationStarted = true;
-  calculateAndDisplay({ scroll: true });
-});
+$('matchForm').addEventListener('submit', event => event.preventDefault());
 function clearOutput() {
   currentInput = null;
   currentResult = null;
