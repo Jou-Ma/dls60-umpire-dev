@@ -440,21 +440,15 @@ function calculateAndDisplay({ scroll = false } = {}) {
   if (errors.length) {
     clearOutput();
     const firstError = errors[0].message;
-    $('formError').textContent = validationStarted ? `Please correct the highlighted fields. ${firstError}` : firstError;
-    $('autoCalcStatus').textContent = 'Complete the highlighted fields. DLS will calculate automatically when the inputs are valid.';
     return false;
   }
   try {
     const input = collectInput();
     const result = calculateMatch(input);
     displayResult(input, result, { scroll, resetReport: false });
-    $('formError').textContent = '';
-    $('autoCalcStatus').textContent = 'DLS updated automatically from the current match details.';
     return true;
   } catch (error) {
     clearOutput();
-    $('formError').textContent = error?.message || 'Could not calculate this scenario.';
-    $('autoCalcStatus').textContent = 'Check the highlighted or reported input before continuing.';
     return false;
   }
 }
@@ -588,8 +582,6 @@ $('resetButton').addEventListener('click', () => {
   updateEmptyMessages();
   clearOutput();
   clearControlErrors();
-  $('formError').textContent = '';
-  $('autoCalcStatus').textContent = 'Select a match type and enter the match details. Calculations update automatically.';
 if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true }), 900);
   syncSecondOversFromFirst();
   suspendAutoCalculation = false;
@@ -942,7 +934,6 @@ updateEmptyMessages();
 if ($('reportDate')) $('reportDate').value = new Date().toLocaleDateString('en-CA');
 clearControlErrors();
 updateReportAvailability();
-$('autoCalcStatus').textContent = 'Select a match type and enter the match details. Calculations update automatically.';
 if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true }), 900);
 
 
