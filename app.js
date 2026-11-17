@@ -414,9 +414,9 @@ function collectInput() {
   const minOversPerSide = Number($('minOversPerSide').value);
   return {
     matchName: $('matchName').value.trim(),
-    capturerFirstName: $('reportCapturerFirstName').value.trim() || 'Name',
-    capturerSurname: $('reportCapturerSurname').value.trim() || 'Surname',
-    capturedBy: `${$('reportCapturerFirstName').value.trim() || 'Name'} ${$('reportCapturerSurname').value.trim() || 'Surname'}`,
+    capturerFirstName: $('reportCapturerFirstName').value.trim(),
+    capturerSurname: $('reportCapturerSurname').value.trim(),
+    capturedBy: `${$('reportCapturerFirstName').value.trim()} ${$('reportCapturerSurname').value.trim()}`.trim(),
     matchType: $('matchType').value,
     matchTypeLabel: currentMatchTypeLabel(),
     minOversPerSide,
@@ -482,9 +482,6 @@ function displayResult(input, result, { scroll = true, resetReport = false } = {
     $('secondFinalOvers').value = '';
   }
   updateReportAvailability();
-  $('lambdaValue').textContent = result.lambda.toFixed(4);
-  $('adjustmentValue').textContent = result.adjustmentFactor.toFixed(9);
-  $('revisedOvers').textContent = result.finalSecondOvers;
   $('calculatedSecondOvers').textContent = result.finalSecondOvers;
   $('resourceSummary').replaceChildren();
   const chips = [
@@ -492,8 +489,7 @@ function displayResult(input, result, { scroll = true, resetReport = false } = {
     `Second-innings overs lost: ${prettyOvers(result.secondResourcesLost)}`,
     `First-innings interruptions: ${input.firstEvents.length}`,
     `Second-innings interruptions: ${input.secondEvents.length}`,
-    `Minimum overs per side: ${input.minOversPerSide}`,
-    `Time per Over: ${input.timePerOver}`
+    `Minimum overs per side: ${input.minOversPerSide}`
   ];
   for (const label of chips) {
     const chip = document.createElement('span');
@@ -557,8 +553,8 @@ $('resetButton').addEventListener('click', () => {
   suspendAutoCalculation = true;
   validationStarted = false;
   $('matchName').value = '';
-  $('reportCapturerFirstName').value = 'Name';
-  $('reportCapturerSurname').value = 'Surname';
+  $('reportCapturerFirstName').value = '';
+  $('reportCapturerSurname').value = '';
   $('matchType').value = '';
   previousMatchType = '';
   $('firstOvers').value = '';
@@ -670,7 +666,7 @@ function createReportHtml() {
   const venue = $('reportVenue').value.trim() || '—';
   const dateValue = $('reportDate').value;
   const matchDate = dateValue ? new Date(`${dateValue}T12:00:00`).toLocaleDateString('en-ZA', { day:'2-digit', month:'short', year:'numeric' }) : new Date().toLocaleDateString('en-ZA', { day:'2-digit', month:'short', year:'numeric' });
-  const capturedBy = `${$('reportCapturerFirstName').value.trim() || 'Name'} ${$('reportCapturerSurname').value.trim() || 'Surname'}`;
+  const capturedBy = `${$('reportCapturerFirstName').value.trim()} ${$('reportCapturerSurname').value.trim()}`.trim() || '—';
   const resultText = describeReportOutcome({ result: currentResult, finalRuns, wicketsLost, chasingTeam: team2, defendingTeam: team1 });
   const matchTitle = currentInput.matchName || `${team1} vs ${team2}`;
   const firstTable = reportEventRows(currentInput.firstEvents);
@@ -820,9 +816,9 @@ $('syncNow').addEventListener('click', () => uploadPendingMatches());
 function inputFromUiRaw(input) {
   return {
     matchName: input.matchName || '',
-    capturerFirstName: input.capturerFirstName || 'Name',
-    capturerSurname: input.capturerSurname || 'Surname',
-    capturedBy: input.capturedBy || `${input.capturerFirstName || 'Name'} ${input.capturerSurname || 'Surname'}`.trim(),
+    capturerFirstName: input.capturerFirstName === 'Name' ? '' : (input.capturerFirstName || ''),
+    capturerSurname: input.capturerSurname === 'Surname' ? '' : (input.capturerSurname || ''),
+    capturedBy: input.capturedBy || `${input.capturerFirstName === 'Name' ? '' : (input.capturerFirstName || '')} ${input.capturerSurname === 'Surname' ? '' : (input.capturerSurname || '')}`.trim(),
     matchType: input.matchType || 'odi',
     matchTypeLabel: input.matchTypeLabel || '',
     minOversPerSide: input.minOversPerSide ?? 20,
@@ -844,8 +840,8 @@ function loadScenario(input) {
   previousMatchType = $('matchType').value;
   applyMatchType(matchType, { presetOvers: false, preserveOtherMinimum: true });
   $('matchName').value = input.matchName || '';
-  $('reportCapturerFirstName').value = input.capturerFirstName || 'Name';
-  $('reportCapturerSurname').value = input.capturerSurname || 'Surname';
+  $('reportCapturerFirstName').value = input.capturerFirstName === 'Name' ? '' : (input.capturerFirstName || '');
+  $('reportCapturerSurname').value = input.capturerSurname === 'Surname' ? '' : (input.capturerSurname || '');
   $('firstOvers').value = input.firstOvers;
   $('firstRuns').value = input.firstRuns;
   $('minOversPerSide').value = input.minOversPerSide ?? (MATCH_TYPES[matchType]?.minOvers ?? '');
@@ -873,8 +869,8 @@ function loadScenario(input) {
     secondTeam: $('reportSecondTeam').value.trim(),
     venue: $('reportVenue').value.trim(),
     matchDate: $('reportDate').value || null,
-    capturerFirstName: $('reportCapturerFirstName').value.trim() || 'Name',
-    capturerSurname: $('reportCapturerSurname').value.trim() || 'Surname',
+    capturerFirstName: $('reportCapturerFirstName').value.trim(),
+    capturerSurname: $('reportCapturerSurname').value.trim(),
     reportReady: getReportReadiness().eligible,
     reportOutcomeCode: getReportReadiness().code || null
   };
