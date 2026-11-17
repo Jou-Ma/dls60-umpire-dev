@@ -848,19 +848,21 @@ $('syncNow').addEventListener('click', () => uploadPendingMatches());
 function inputFromUiRaw(input) {
   return {
     matchName: input.matchName || '',
-    customTimePerOver: input.customTimePerOver ?? null,
+    customTimePerOver: input.timePerOver ?? input.customTimePerOver ?? null,
+    timePerOver: input.timePerOver ?? input.customTimePerOver ?? null,
     capturerFirstName: input.capturerFirstName || 'Name',
     capturerSurname: input.capturerSurname || 'Surname',
     capturedBy: input.capturedBy || `${input.capturerFirstName || 'Name'} ${input.capturerSurname || 'Surname'}`.trim(),
     matchType: input.matchType || 'odi',
     matchTypeLabel: input.matchTypeLabel || '',
     minOversPerSide: input.minOversPerSide ?? 20,
-    autoSecondOvers: input.autoSecondOvers !== false,
+    autoSecondOvers: true,
     firstOvers: input.firstOvers,
     firstRuns: input.firstRuns,
-    secondOvers: input.secondOvers,
-    secondOversNotation: formatOvers(input.secondOvers),
+    secondOvers: input.firstOvers,
+    secondOversNotation: formatOvers(input.firstOvers),
     penaltyRuns: input.penaltyRuns || 0,
+    secondInningsPenaltyRuns: input.secondInningsPenaltyRuns || 0,
     firstEventRows: input.firstEventRows || [],
     secondEventRows: input.secondEventRows || []
   };
