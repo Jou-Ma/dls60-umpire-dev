@@ -684,9 +684,7 @@ function createReportHtml() {
   const penaltyRuns = Number(currentInput.penaltyRuns || 0);
   const firstOvers = formatOvers(currentInput.firstOvers);
   const secondStartOvers = formatOvers(currentInput.secondOvers);
-  const firstLost = prettyOvers(currentResult.firstResourcesLost);
   const firstAvailable = prettyOvers(currentResult.firstRemainingOvers);
-  const secondLost = prettyOvers(currentResult.secondResourcesLost);
   const revisedOvers = formatOvers(currentResult.finalSecondOvers);
 
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DLS Match Report - ${escapeHtml(matchTitle)}</title><style>
@@ -732,24 +730,22 @@ function createReportHtml() {
       <div class="sub">${escapeHtml(competition)} &nbsp;·&nbsp; ${escapeHtml(venue)} &nbsp;·&nbsp; ${escapeHtml(matchDate)}</div>
     </header>
     <div class="match-facts">
-      <span><strong>Format:</strong> ${escapeHtml(currentInput.matchTypeLabel)}</span>
-      <span><strong>Minimum overs per side:</strong> ${currentInput.minOversPerSide}</span>
-      <span><strong>Overs per innings at start:</strong> ${escapeHtml(firstOvers)}</span>
+      <span><strong>Format:</strong> ${escapeHtml(currentInput.matchTypeLabel)}; minimum ${currentInput.minOversPerSide} overs per side</span>
     </div>
 
     <section class="innings">
       <h2>First innings — ${escapeHtml(team1)}</h2>
-      <p class="narrative"><strong>${escapeHtml(team1)}</strong> scored <strong>${currentInput.firstRuns}</strong> runs from a maximum of <strong>${escapeHtml(firstOvers)}</strong> overs.</p>
-      <p class="detail-line">Scheduled overs: <strong>${escapeHtml(firstOvers)}</strong> &nbsp;·&nbsp; Overs lost: <strong>${escapeHtml(firstLost)}</strong> &nbsp;·&nbsp; Overs available: <strong>${escapeHtml(firstAvailable)}</strong></p>
+      <p class="narrative"><strong>${escapeHtml(team1)}</strong> ${currentInput.firstRuns} from ${escapeHtml(firstAvailable)} overs.</p>
       ${firstTable}
+      <p class="detail-line"><strong>1st Innings Available Overs:</strong> ${escapeHtml(firstAvailable)} overs</p>
     </section>
 
     <section class="innings">
       <h2>Second innings — ${escapeHtml(team2)}</h2>
-      <p class="narrative">The chase began with <strong>${escapeHtml(secondStartOvers)}</strong> overs available. Following the interruption(s), the revised allocation was <strong>${escapeHtml(revisedOvers)}</strong> overs and the revised target was <strong>${currentResult.target}</strong> runs.</p>
-      <p class="narrative">The innings ended at <strong>${finalRuns}${wicketsLost == null ? '' : `/${wicketsLost}`}</strong>${finalOvers ? ` after ${escapeHtml(finalOvers)} overs` : ''}.</p>
-      <p class="detail-line">Overs lost: <strong>${escapeHtml(secondLost)}</strong> &nbsp;·&nbsp; Revised chase length: <strong>${escapeHtml(revisedOvers)}</strong> &nbsp;·&nbsp; Penalty runs to ${escapeHtml(team1)} while ${escapeHtml(team2)} batted: <strong>${penaltyRuns}</strong></p>
+      <p class="narrative"><strong>${escapeHtml(team2)}</strong> ${finalRuns}${wicketsLost == null ? '' : `/${wicketsLost}`} from ${escapeHtml(finalOvers || revisedOvers)} overs.</p>
       ${secondTable}
+      <p class="detail-line"><strong>2nd Innings Available Overs:</strong> ${escapeHtml(revisedOvers)} overs</p>
+      <p class="detail-line">Penalty runs to ${escapeHtml(team1)} while ${escapeHtml(team2)} batted: <strong>${penaltyRuns}</strong></p>
     </section>
 
     <section class="target-result">
