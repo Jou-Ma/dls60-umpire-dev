@@ -748,7 +748,7 @@ function createReportHtml() {
       <h2>Second innings — ${escapeHtml(team2)}</h2>
       <p class="narrative"><strong>${escapeHtml(team2)}</strong> required <strong>${currentResult.target}</strong> runs to win from an initial allocation of <strong>${escapeHtml(secondStartOvers)}</strong> overs.</p>
       <p class="narrative">The innings ended at <strong>${finalRuns}${wicketsLost == null ? '' : `/${wicketsLost}`}</strong>${finalOvers ? ` after ${escapeHtml(finalOvers)} overs` : ''}.</p>
-      <p class="detail-line">Overs lost: <strong>${escapeHtml(secondLost)}</strong> &nbsp;·&nbsp; Revised chase length: <strong>${escapeHtml(revisedOvers)}</strong> &nbsp;·&nbsp; Penalty runs awarded to ${escapeHtml(team1):''} while ${escapeHtml(team2)} batted: <strong>${penaltyRuns}</strong></p>
+      <p class="detail-line">Overs lost: <strong>${escapeHtml(secondLost)}</strong> &nbsp;·&nbsp; Revised chase length: <strong>${escapeHtml(revisedOvers)}</strong> &nbsp;·&nbsp; Penalty runs awarded to ${escapeHtml(team1)} while ${escapeHtml(team2)} batted: <strong>${penaltyRuns}</strong></p>
       ${secondTable}
     </section>
 
