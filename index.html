@@ -58,7 +58,7 @@
         </div>
         <div class="field-grid field-grid-3 field-grid-bottom">
           <label class="field"><span>Overs per innings</span><input id="firstOvers" type="number" min="1" max="100" step="1" placeholder="Select match type first" disabled required><small class="field-error" aria-live="polite"></small></label>
-          <label class="field" id="customTimePerOverField" hidden><span>Time per Over (minutes) <small id="timePerOverModeLabel"></small></span><input id="customTimePerOver" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="Set by match type" disabled><small class="field-help" id="timePerOverHelp">Enter the applicable playing-condition allowance.</small><small class="field-error" aria-live="polite"></small></label>
+          <label class="field" id="customTimePerOverField" hidden><span>Time per Over (minutes) <small id="timePerOverModeLabel"></small></span><input id="customTimePerOver" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="Set by match type" disabled><small class="field-help" id="dlsTimePerOverHelp">Enter the applicable playing-condition allowance.</small><small class="field-error" aria-live="polite"></small></label>
           <label class="field"><span>Minimum overs per side <small id="minimumOversModeLabel">set by match type</small></span><input id="minOversPerSide" type="number" min="1" max="99" step="1" placeholder="Set by match setup" disabled readonly><small id="minimumOversHelp" class="field-help">ODI defaults to 20; T20 defaults to 5.</small><small class="field-error" aria-live="polite"></small></label>
         </div>
         <input id="secondOvers" type="hidden">
@@ -87,25 +87,6 @@
         <div class="field-grid field-grid-2 innings-score-grid">
           <label class="field"><span>Second-innings penalty runs <small>optional</small></span><input id="secondPenaltyRuns" type="number" min="0" max="999" step="1" value="0"><small class="field-error" aria-live="polite"></small></label>
           <div class="calculated-allocation"><span>Calculated second-innings overs</span><strong id="calculatedSecondOvers">—</strong><small>After applying second-innings interruptions</small></div>
-        </div>
-        <div id="secondEvents" class="event-list"></div>
-        <div id="secondEmpty" class="empty-events">No second-innings interruptions entered.</div>
-      </section>
-      </section>
-
-      <section class="panel">
-        <div class="panel-heading">
-          <div><div class="step-label">02 · FIRST INNINGS</div><h2>Batting first interruptions</h2><p class="panel-hint">Events must be entered in the order they happened. Overs bowled is cumulative from the start of the innings.</p></div>
-          <button class="button button-outline" id="addFirstEvent" type="button"><span class="plus">＋</span> Add event</button>
-        </div>
-        <div id="firstEvents" class="event-list"></div>
-        <div id="firstEmpty" class="empty-events">No first-innings interruptions entered.</div>
-      </section>
-
-      <section class="panel">
-        <div class="panel-heading">
-          <div><div class="step-label">03 · SECOND INNINGS</div><h2>Chasing-team interruptions</h2><p class="panel-hint">Enter the over position and wickets at each stoppage. Each event's overs lost is its individual loss, not a cumulative total.</p></div>
-          <button class="button button-outline" id="addSecondEvent" type="button"><span class="plus">＋</span> Add event</button>
         </div>
         <div id="secondEvents" class="event-list"></div>
         <div id="secondEmpty" class="empty-events">No second-innings interruptions entered.</div>
