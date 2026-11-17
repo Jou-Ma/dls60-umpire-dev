@@ -38,7 +38,7 @@
       <section class="panel match-panel">
         <div class="panel-heading">
           <div><div class="step-label">01 · MATCH DETAILS</div><h2>Match setup</h2></div>
-          <span class="tag">Required</span>
+          <div class="panel-heading-actions"><span class="tag">Required</span><button class="button button-secondary" id="resetButton" type="button">Reset form</button></div>
         </div>
         <div class="field-grid match-type-row">
           <label class="field"><span>Match type</span>
@@ -91,10 +91,6 @@
         </div>
       </section>
 
-      <div class="form-actions">
-        <button class="button button-primary button-large" type="submit"><span>Calculate / refresh DLS</span><span aria-hidden="true">→</span></button>
-        <button class="button button-secondary" id="resetButton" type="button">Reset form</button>
-      </div>
       <p id="autoCalcStatus" class="auto-calc-status" role="status" aria-live="polite">Calculations update automatically once the required match details are valid.</p>
       <p id="formError" class="form-error" role="alert" aria-live="polite"></p>
     </form>
