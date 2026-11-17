@@ -112,7 +112,7 @@ function isBlankEventRow(row) {
 
 function firstInningsAllocationPreview() {
   const scheduled = Number($('firstOvers').value);
-  if (!Number.isInteger(scheduled) || scheduled < 1 || scheduled > 99) {
+  if (!Number.isInteger(scheduled) || scheduled < 1 || scheduled > 100) {
     return { valid: false, message: 'Enter valid first-innings scheduled overs to calculate the chase allocation.' };
   }
   const rows = readEventRows('firstEvents').filter(row => !isBlankEventRow(row));
@@ -139,9 +139,10 @@ function firstInningsAllocationPreview() {
 }
 
 function syncSecondOversFromFirst() {
-  // Both innings start with the same scheduled allocation. First-innings
-  // interruptions do not silently shorten the chasing side's starting allocation.
-  $('secondOvers').value = $('firstOvers').value.trim();
+  // The chasing side starts with the first-innings allocation after all
+  // first-innings interruption losses have been applied.
+  const allocation = firstInningsAllocationPreview();
+  $('secondOvers').value = allocation.valid ? allocation.remainingOvers : '';
   $('autoSecondOvers').checked = true;
 }
 $('autoSecondOvers').addEventListener('change', () => {
@@ -406,7 +407,8 @@ function validateFormControls() {
   if (hasType && (!Number.isFinite(rate) || rate <= 0)) {
     add('customTimePerOver', 'Enter a valid Time per Over greater than zero.');
   }
-  const secondOvers = firstOvers;
+  const allocation = firstInningsAllocationPreview();
+  const secondOvers = allocation.valid ? parseOvers(allocation.remainingOvers) : null;
 
   if (firstOvers != null) {
     errors.push(...validateEventRows('firstEvents', firstOvers, 'First innings', Number.isFinite(firstRuns) ? firstRuns : null));
@@ -429,7 +431,9 @@ function collectInput() {
   const firstRows = readEventRows('firstEvents');
   const secondRows = readEventRows('secondEvents');
   const firstEvents = prepareEvents(firstRows, firstOvers, 'First innings');
-  const secondOvers = firstOvers;
+  const allocation = firstInningsAllocationPreview();
+  if (!allocation.valid) throw new Error(allocation.message);
+  const secondOvers = parseOvers(allocation.remainingOvers);
   syncSecondOversFromFirst();
   const secondEvents = prepareEvents(secondRows, secondOvers, 'Second innings');
   const minOversPerSide = Number($('minOversPerSide').value);
@@ -447,7 +451,7 @@ function collectInput() {
     firstOvers,
     firstRuns,
     secondOvers,
-    secondOversNotation: String(firstOvers),
+    secondOversNotation: allocation.remainingOvers,
     penaltyRuns: Number($('penaltyRuns').value || 0),
     firstEvents,
     secondEvents,
