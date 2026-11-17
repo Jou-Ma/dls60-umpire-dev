@@ -1159,9 +1159,25 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     setPowerplay('c', a3);
 
     // Table 4 — second-innings interruption.
-    const da = timeMinutes('d-a'), db = timeMinutes('d-b'), dc = number('d-c'), dd = timeMinutes('d-d');
-    let de = null;
-    if (db != null && dd != null) de = ((dd - db) + 1440) % 1440;
+    const da = timeMinutes('d-a'), db = timeMinutes('d-b'), dd = timeMinutes('d-d');
+    const dc = da == null || db == null ? null : ((db - da) + 1440) % 1440;
+    setNumber('d-c', dc);
+    const restartField = fields['d-d'];
+    const restartRow = restartField?.closest('tr');
+    const restartError = document.getElementById('d-d-error');
+    const invalidRestart = db != null && dd != null && dd < db;
+    if (restartRow) restartRow.classList.toggle('is-invalid', invalidRestart);
+    if (restartError) restartError.textContent = invalidRestart
+      ? 'Restart time cannot be earlier than the interruption time. Correct D to continue Table 4.'
+      : '';
+    if (invalidRestart) {
+      ['d-e','d-g','d-i','d-j','d-k'].forEach(key => setNumber(key, null));
+      setTime('d-l', null);
+      setBowlingRestriction('d-bowler', null);
+      setPowerplay('d', null);
+      return;
+    }
+    const de = db == null || dd == null ? null : dd - db;
     setNumber('d-e', de);
     const df = number('d-f');
     const dg = de == null || df == null ? null : de - df;
