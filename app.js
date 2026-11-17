@@ -1175,6 +1175,7 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
       setTime('d-l', null);
       setBowlingRestriction('d-bowler', null);
       setPowerplay('d', null);
+      updateScenarioTable();
       return;
     }
     const de = db == null || dd == null ? null : dd - db;
@@ -1240,7 +1241,10 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     const scenarioTimes = [];
     for (let t = earliest; t < finalWindowStart; t += 15) scenarioTimes.push(t);
     if (finalWindowStart >= earliest) scenarioTimes.push(finalWindowStart);
-    for (let t = Math.max(earliest, finalWindowStart) + 5; t <= cessationTimeline; t += 5) scenarioTimes.push(t);
+    else scenarioTimes.push(earliest);
+    for (let t = finalWindowStart + 5; t <= cessationTimeline; t += 5) {
+      if (t > earliest) scenarioTimes.push(t);
+    }
     if (!scenarioTimes.length || scenarioTimes[0] !== earliest) scenarioTimes.unshift(earliest);
     const uniqueTimes = [...new Set(scenarioTimes)].filter(t => t >= earliest && t <= cessationTimeline).sort((a,b) => a-b);
     const rows = uniqueTimes.map(restart => {
