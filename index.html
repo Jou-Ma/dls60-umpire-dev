@@ -275,6 +275,31 @@
           <tr><td></td><td data-pp-label>Powerplay allocation</td><td class="split-entry powerplay-entry"><input data-calc="d-pp1" aria-label="Powerplay 1 overs" readonly aria-readonly="true" placeholder="P1"><span data-pp-plus>+</span><input data-calc="d-pp2" aria-label="Powerplay 2 overs" readonly aria-readonly="true" placeholder="P2"><span data-pp-plus>+</span><input data-calc="d-pp3" aria-label="Powerplay 3 overs" readonly aria-readonly="true" placeholder="P3"></td></tr>
         </tbody></table></div>
       </section>
+      <section class="panel appendix-panel" id="recommencementScenarios">
+        <div class="panel-heading"><div><div class="step-label">RECOMMENCEMENT SCENARIOS</div><h2>Second-innings recommencement time</h2><p class="panel-hint">Compare proposed restart times against the minimum-overs cut-off. Original Appendix A entries remain unchanged.</p></div></div>
+        <div class="field-grid field-grid-2 scenario-controls">
+          <label class="field"><span>Applicable second-innings cessation time</span>
+            <select id="scenarioCessationSource">
+              <option value="">Select cessation-time source…</option>
+              <option value="a-o">Table 1 – O · Rescheduled second-innings cessation</option>
+              <option value="c-d">Table 3 – D · Scheduled second-innings cessation</option>
+              <option value="d-l">Table 4 – L · Amended second-innings cessation</option>
+            </select>
+            <small class="field-help">Select the calculation that governs the current match situation.</small>
+          </label>
+          <label class="field"><span>Earliest proposed recommencement time</span>
+            <input id="scenarioEarliestRestart" type="time">
+            <small class="field-help">The first scenario; later options are generated automatically.</small>
+          </label>
+        </div>
+        <div class="scenario-summary" id="scenarioSummary" role="status" aria-live="polite">Select a cessation-time source and enter the earliest proposed recommencement time.</div>
+        <div class="calc-table-wrap scenario-table-wrap">
+          <table class="calc-sheet scenario-table">
+            <thead><tr><th>Recommencement</th><th>Time available</th><th>Overs possible</th><th>Minimum-overs outcome</th></tr></thead>
+            <tbody id="scenarioRows"><tr><td colspan="4">Complete the scenario inputs to generate the table.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
       <p class="appendix-footnote">Development calculation worksheet. Calculated fields update automatically from the supplied Appendix A formulas. Confirm the applicable Playing Conditions before using the outputs for a match.</p>
     </section>
     <section class="app-tab-panel placeholder-panel" id="tab-help" role="tabpanel" aria-labelledby="tab-button-help" hidden>
