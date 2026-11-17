@@ -158,8 +158,7 @@ $('secondOvers').addEventListener('input', handleCoreInputChange);
 $('minOversPerSide').addEventListener('input', handleCoreInputChange);
 $('penaltyRuns').addEventListener('input', handleCoreInputChange);
 $('matchName').addEventListener('input', handleCoreInputChange);
-$('reportCapturerFirstName').addEventListener('input', handleCoreInputChange);
-$('reportCapturerSurname').addEventListener('input', handleCoreInputChange);
+$('reportCapturerFullName').addEventListener('input', handleCoreInputChange);
 
 function applyMatchType(type, { presetOvers = true, preserveOtherMinimum = false } = {}) {
   const preset = MATCH_TYPES[type];
@@ -414,9 +413,8 @@ function collectInput() {
   const minOversPerSide = Number($('minOversPerSide').value);
   return {
     matchName: $('matchName').value.trim(),
-    capturerFirstName: $('reportCapturerFirstName').value.trim(),
-    capturerSurname: $('reportCapturerSurname').value.trim(),
-    capturedBy: `${$('reportCapturerFirstName').value.trim()} ${$('reportCapturerSurname').value.trim()}`.trim(),
+    capturerFullName: $('reportCapturerFullName').value.trim(),
+    capturedBy: $('reportCapturerFullName').value.trim(),
     matchType: $('matchType').value,
     matchTypeLabel: currentMatchTypeLabel(),
     minOversPerSide,
@@ -553,8 +551,7 @@ $('resetButton').addEventListener('click', () => {
   suspendAutoCalculation = true;
   validationStarted = false;
   $('matchName').value = '';
-  $('reportCapturerFirstName').value = '';
-  $('reportCapturerSurname').value = '';
+  $('reportCapturerFullName').value = '';
   $('matchType').value = '';
   previousMatchType = '';
   $('firstOvers').value = '';
@@ -666,7 +663,7 @@ function createReportHtml() {
   const venue = $('reportVenue').value.trim() || '—';
   const dateValue = $('reportDate').value;
   const matchDate = dateValue ? new Date(`${dateValue}T12:00:00`).toLocaleDateString('en-ZA', { day:'2-digit', month:'short', year:'numeric' }) : new Date().toLocaleDateString('en-ZA', { day:'2-digit', month:'short', year:'numeric' });
-  const capturedBy = `${$('reportCapturerFirstName').value.trim()} ${$('reportCapturerSurname').value.trim()}`.trim() || '—';
+  const capturedBy = $('reportCapturerFullName').value.trim() || '—';
   const resultText = describeReportOutcome({ result: currentResult, finalRuns, wicketsLost, chasingTeam: team2, defendingTeam: team1 });
   const matchTitle = currentInput.matchName || `${team1} vs ${team2}`;
   const firstTable = reportEventRows(currentInput.firstEvents);
@@ -729,7 +726,8 @@ function renderSaved() {
     const info = document.createElement('div');
     const title = document.createElement('strong'); title.textContent = item.input.matchName || 'Unnamed match';
     const detail = document.createElement('small');
-    const capturer = item.input.capturerFirstName || item.input.capturerSurname ? `Captured by ${`${item.input.capturerFirstName || ''} ${item.input.capturerSurname || ''}`.trim()} · ` : 'Capturer name required · ';
+    const savedCapturer = item.input.capturerFullName || `${item.input.capturerFirstName || ''} ${item.input.capturerSurname || ''}`.trim();
+    const capturer = savedCapturer ? `Captured by ${savedCapturer} · ` : 'Capturer name not entered · ';
     const uploadLabel = item.uploadStatus === 'uploaded' ? 'Uploaded' : item.uploadStatus === 'error' ? 'Upload failed — retry pending' : 'Pending upload';
     detail.textContent = `${capturer}${item.input.matchTypeLabel || item.input.matchType || 'Match'} · ${item.input.firstRuns} runs · ${item.summary.noResult ? 'No result' : `target ${item.summary.target}`} · ${uploadLabel} · ${new Date(item.savedAt).toLocaleString()}`;
     info.append(title, detail);
@@ -816,9 +814,8 @@ $('syncNow').addEventListener('click', () => uploadPendingMatches());
 function inputFromUiRaw(input) {
   return {
     matchName: input.matchName || '',
-    capturerFirstName: input.capturerFirstName === 'Name' ? '' : (input.capturerFirstName || ''),
-    capturerSurname: input.capturerSurname === 'Surname' ? '' : (input.capturerSurname || ''),
-    capturedBy: input.capturedBy || `${input.capturerFirstName === 'Name' ? '' : (input.capturerFirstName || '')} ${input.capturerSurname === 'Surname' ? '' : (input.capturerSurname || '')}`.trim(),
+    capturerFullName: input.capturerFullName || input.capturedBy || `${input.capturerFirstName === 'Name' ? '' : (input.capturerFirstName || '')} ${input.capturerSurname === 'Surname' ? '' : (input.capturerSurname || '')}`.trim(),
+    capturedBy: input.capturedBy || input.capturerFullName || `${input.capturerFirstName === 'Name' ? '' : (input.capturerFirstName || '')} ${input.capturerSurname === 'Surname' ? '' : (input.capturerSurname || '')}`.trim(),
     matchType: input.matchType || 'odi',
     matchTypeLabel: input.matchTypeLabel || '',
     minOversPerSide: input.minOversPerSide ?? 20,
@@ -840,8 +837,7 @@ function loadScenario(input) {
   previousMatchType = $('matchType').value;
   applyMatchType(matchType, { presetOvers: false, preserveOtherMinimum: true });
   $('matchName').value = input.matchName || '';
-  $('reportCapturerFirstName').value = input.capturerFirstName === 'Name' ? '' : (input.capturerFirstName || '');
-  $('reportCapturerSurname').value = input.capturerSurname === 'Surname' ? '' : (input.capturerSurname || '');
+  $('reportCapturerFullName').value = input.capturerFullName || input.capturedBy || `${input.capturerFirstName === 'Name' ? '' : (input.capturerFirstName || '')} ${input.capturerSurname === 'Surname' ? '' : (input.capturerSurname || '')}`.trim();
   $('firstOvers').value = input.firstOvers;
   $('firstRuns').value = input.firstRuns;
   $('minOversPerSide').value = input.minOversPerSide ?? (MATCH_TYPES[matchType]?.minOvers ?? '');
@@ -869,8 +865,7 @@ function loadScenario(input) {
     secondTeam: $('reportSecondTeam').value.trim(),
     venue: $('reportVenue').value.trim(),
     matchDate: $('reportDate').value || null,
-    capturerFirstName: $('reportCapturerFirstName').value.trim(),
-    capturerSurname: $('reportCapturerSurname').value.trim(),
+    capturerFullName: $('reportCapturerFullName').value.trim(),
     reportReady: getReportReadiness().eligible,
     reportOutcomeCode: getReportReadiness().code || null
   };
