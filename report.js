@@ -1,16 +1,11 @@
 import { parseOvers, oversToBalls } from './engine.js';
 
-/**
- * Report readiness validates the recorded score and any penalty runs.
- * Second-innings penalty runs affect the match result only; they do not alter
- * the DLS target or the underlying resource calculation.
- */
+/** Report readiness validates the chasing side's recorded final score. */
 export function evaluateReportReadiness({
   result,
   finalRunsRaw,
   wicketsRaw = '',
   oversRaw = '',
-  secondInningsPenaltyRunsRaw = '0',
   secondEvents = []
 }) {
   if (!result) {
@@ -25,13 +20,6 @@ export function evaluateReportReadiness({
   if (!Number.isInteger(finalRuns) || finalRuns < 0 || finalRuns > 999) {
     return { eligible: false, code: 'invalid-score', message: 'Final runs must be a whole number from 0 to 999.' };
   }
-
-  const penaltyText = String(secondInningsPenaltyRunsRaw ?? '0').trim();
-  const secondInningsPenaltyRuns = penaltyText === '' ? 0 : Number(penaltyText);
-  if (!Number.isInteger(secondInningsPenaltyRuns) || secondInningsPenaltyRuns < 0 || secondInningsPenaltyRuns > 999) {
-    return { eligible: false, code: 'invalid-penalty', message: 'Second-innings penalty runs must be a whole number from 0 to 999.' };
-  }
-  const effectiveFinalRuns = finalRuns + secondInningsPenaltyRuns;
 
   const wicketsText = String(wicketsRaw ?? '').trim();
   const wicketsLost = wicketsText === '' ? null : Number(wicketsText);
@@ -73,49 +61,44 @@ export function evaluateReportReadiness({
   if (result.noResult) {
     code = 'no-result';
     message = `Report ready. The match is classified NO RESULT: ${result.noResultReason || 'minimum overs requirement not met'}.`;
-  } else if (effectiveFinalRuns >= result.target) {
+  } else if (finalRuns >= result.target) {
     code = 'target-achieved';
-    message = `Report ready. The chasing team’s effective score is ${effectiveFinalRuns}${secondInningsPenaltyRuns ? ` (including ${secondInningsPenaltyRuns} penalty runs)` : ''}, achieving the revised target of ${result.target}.`;
+    message = `Report ready. The chasing team achieved the revised target of ${result.target}.`;
   } else {
-    const shortfall = result.target - effectiveFinalRuns;
-    message = `Report ready. The revised target was not achieved; the effective score is ${shortfall} run${shortfall === 1 ? '' : 's'} below the target of ${result.target}.`;
+    const shortfall = result.target - finalRuns;
+    message = `Report ready. The revised target was not achieved; the score is ${shortfall} run${shortfall === 1 ? '' : 's'} below the target of ${result.target}.`;
     code = 'target-not-achieved';
   }
 
-  return { eligible: true, code, message, finalRuns, effectiveFinalRuns, secondInningsPenaltyRuns, wicketsLost, finalOvers };
+  return { eligible: true, code, message, finalRuns, wicketsLost, finalOvers };
 }
 
-/** Build neutral, outcome-aware wording using the score plus second-innings penalty runs. */
+/** Build neutral, outcome-aware wording using the recorded final score. */
 export function describeReportOutcome({
   result,
   finalRuns,
-  secondInningsPenaltyRuns = 0,
   wicketsLost = null,
   chasingTeam = 'Team B',
   defendingTeam = 'Team A'
 }) {
-  const effectiveRuns = Number(finalRuns) + Number(secondInningsPenaltyRuns || 0);
   const score = `${finalRuns}${wicketsLost == null ? '' : `/${wicketsLost}`}`;
-  const penaltyNote = secondInningsPenaltyRuns
-    ? ` · ${secondInningsPenaltyRuns} second-innings penalty runs (effective score ${effectiveRuns})`
-    : '';
 
   if (result.noResult) {
-    return `DLS Target: ${result.target} · ${chasingTeam} Final Score: ${score}${penaltyNote} · No Result.`;
+    return `DLS Target: ${result.target} · ${chasingTeam} Final Score: ${score} · No Result.`;
   }
 
-  if (effectiveRuns >= result.target) {
+  if (finalRuns >= result.target) {
     if (wicketsLost != null && wicketsLost < 10) {
       const wicketsRemaining = 10 - wicketsLost;
-      return `DLS Target: ${result.target} · ${chasingTeam} Final Score: ${score}${penaltyNote} · ${chasingTeam} won by ${wicketsRemaining} wicket${wicketsRemaining === 1 ? '' : 's'}.`;
+      return `DLS Target: ${result.target} · ${chasingTeam} Final Score: ${score} · ${chasingTeam} won by ${wicketsRemaining} wicket${wicketsRemaining === 1 ? '' : 's'}.`;
     }
-    return `DLS Target: ${result.target} · ${chasingTeam} Final Score: ${score}${penaltyNote} · ${chasingTeam} won.`;
+    return `DLS Target: ${result.target} · ${chasingTeam} Final Score: ${score} · ${chasingTeam} won.`;
   }
 
-  if (effectiveRuns === result.target - 1) {
-    return `DLS Target: ${result.target} · ${chasingTeam} Final Score: ${score}${penaltyNote} · Match tied.`;
+  if (finalRuns === result.target - 1) {
+    return `DLS Target: ${result.target} · ${chasingTeam} Final Score: ${score} · Match tied.`;
   }
 
-  const runsMargin = result.target - effectiveRuns - 1;
-  return `DLS Target: ${result.target} · ${chasingTeam} Final Score: ${score}${penaltyNote} · ${defendingTeam} won by ${runsMargin} run${runsMargin === 1 ? '' : 's'}.`;
+  const runsMargin = result.target - finalRuns - 1;
+  return `DLS Target: ${result.target} · ${chasingTeam} Final Score: ${score} · ${defendingTeam} won by ${runsMargin} run${runsMargin === 1 ? '' : 's'}.`;
 }
