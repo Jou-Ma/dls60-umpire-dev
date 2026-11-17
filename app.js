@@ -93,13 +93,17 @@ function updateEmptyMessages() {
 $('addFirstEvent').addEventListener('click', () => addEventRow('firstEvents'));
 $('addSecondEvent').addEventListener('click', () => addEventRow('secondEvents'));
 
+// Start a new match with one blank interruption row in each innings.
+addEventRow('firstEvents');
+addEventRow('secondEvents');
+
 function readEventRows(containerId) {
   return [...$(containerId).querySelectorAll('.event-row')].map(row => ({
     oversBowled: row.querySelector('.event-overs').value.trim(),
     scoreAtEvent: row.querySelector('.event-score').value.trim(),
     wickets: row.querySelector('.event-wickets').value,
     oversLost: row.querySelector('.event-loss').value.trim()
-  }));
+  })).filter(row => !isBlankEventRow(row));
 }
 
 function isBlankEventRow(row) {
@@ -152,7 +156,6 @@ $('firstRuns').addEventListener('input', handleCoreInputChange);
 $('secondOvers').addEventListener('input', handleCoreInputChange);
 $('minOversPerSide').addEventListener('input', handleCoreInputChange);
 $('penaltyRuns').addEventListener('input', handleCoreInputChange);
-$('secondPenaltyRuns').addEventListener('input', updateReportAvailability);
 $('customTimePerOver').addEventListener('input', handleCoreInputChange);
 $('matchName').addEventListener('input', handleCoreInputChange);
 $('reportCapturerFirstName').addEventListener('input', handleCoreInputChange);
@@ -278,6 +281,8 @@ function validateEventRows(containerId, scheduledOvers, label, firstRuns = null)
     const scoreControl = wrapper.querySelector('.event-score');
     const wicketsControl = wrapper.querySelector('.event-wickets');
     const lossControl = wrapper.querySelector('.event-loss');
+    if (!oversControl.value.trim() && !scoreControl.value.trim() && !lossControl.value.trim() &&
+        (!wicketsControl.value.trim() || wicketsControl.value.trim() === '0')) return;
     let rowOverBalls = null;
     let rowLossBalls = null;
     let rowWickets = null;
@@ -381,13 +386,11 @@ function validateFormControls() {
     }
   }
 
-  for (const [id, label] of [['penaltyRuns', 'First-innings penalty runs'], ['secondPenaltyRuns', 'Second-innings penalty runs']]) {
-    const penaltyText = $(id).value.trim();
-    if (penaltyText !== '') {
-      const penalty = Number(penaltyText);
-      if (!Number.isInteger(penalty) || penalty < 0 || penalty > 999) {
-        add(id, `${label} must be a whole number from 0 to 999.`);
-      }
+  const penaltyText = $('penaltyRuns').value.trim();
+  if (penaltyText !== '') {
+    const penalty = Number(penaltyText);
+    if (!Number.isInteger(penalty) || penalty < 0 || penalty > 999) {
+      add('penaltyRuns', 'Penalty runs must be a whole number from 0 to 999.');
     }
   }
   const rateText = $('customTimePerOver').value.trim();
@@ -438,7 +441,6 @@ function collectInput() {
     secondOvers,
     secondOversNotation: String(firstOvers),
     penaltyRuns: Number($('penaltyRuns').value || 0),
-    secondInningsPenaltyRuns: Number($('secondPenaltyRuns').value || 0),
     firstEvents,
     secondEvents,
     firstEventRows: firstRows,
@@ -600,12 +602,13 @@ $('resetButton').addEventListener('click', () => {
   $('secondOvers').value = '';
   $('secondOvers').disabled = true;
   $('penaltyRuns').value = '0';
-  $('secondPenaltyRuns').value = '0';
   $('calculatedSecondOvers').textContent = '—';
   ['secondFinalRuns','secondFinalWickets','secondFinalOvers','reportCompetition','reportFirstTeam','reportSecondTeam','reportVenue'].forEach(id => { if ($(id)) $(id).value = ''; });
   if ($('reportDate')) $('reportDate').value = new Date().toLocaleDateString('en-CA');
   $('firstEvents').replaceChildren();
   $('secondEvents').replaceChildren();
+  addEventRow('firstEvents');
+  addEventRow('secondEvents');
   updateEmptyMessages();
   clearOutput();
   clearControlErrors();
@@ -640,7 +643,6 @@ function getReportReadiness() {
     finalRunsRaw: $('secondFinalRuns').value,
     wicketsRaw: $('secondFinalWickets').value,
     oversRaw: $('secondFinalOvers').value,
-    secondInningsPenaltyRunsRaw: $('secondPenaltyRuns').value,
     secondEvents: currentInput?.secondEvents || []
   });
 }
@@ -658,7 +660,6 @@ function updateReportAvailability() {
     const tagLabels = {
       'missing-score': 'Final score required',
       'invalid-score': 'Invalid final score',
-      'invalid-penalty': 'Invalid penalty runs',
       'invalid-wickets': 'Invalid wicket total',
       'invalid-overs': 'Invalid finish overs',
       'score-before-event': 'Score details inconsistent',
@@ -680,7 +681,6 @@ function updateReportAvailability() {
 $('secondFinalRuns').addEventListener('input', updateReportAvailability);
 $('secondFinalWickets').addEventListener('input', updateReportAvailability);
 $('secondFinalOvers').addEventListener('input', updateReportAvailability);
-$('secondPenaltyRuns').addEventListener('input', updateReportAvailability);
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[ch]));
@@ -694,8 +694,6 @@ function createReportHtml() {
   const readiness = getReportReadiness();
   if (!readiness.eligible) throw new Error(readiness.message);
   const finalRuns = readiness.finalRuns;
-  const secondInningsPenaltyRuns = readiness.secondInningsPenaltyRuns;
-  const effectiveFinalRuns = readiness.effectiveFinalRuns;
   const wicketsLost = readiness.wicketsLost;
   const finalOvers = $('secondFinalOvers').value.trim();
   const competition = $('reportCompetition').value.trim() || '—';
@@ -705,7 +703,7 @@ function createReportHtml() {
   const dateValue = $('reportDate').value;
   const matchDate = dateValue ? new Date(`${dateValue}T12:00:00`).toLocaleDateString('en-ZA', { day:'2-digit', month:'short', year:'numeric' }) : new Date().toLocaleDateString('en-ZA', { day:'2-digit', month:'short', year:'numeric' });
   const capturedBy = `${$('reportCapturerFirstName').value.trim() || 'Name'} ${$('reportCapturerSurname').value.trim() || 'Surname'}`;
-  const resultText = describeReportOutcome({ result: currentResult, finalRuns, secondInningsPenaltyRuns, wicketsLost, chasingTeam: team2, defendingTeam: team1 });
+  const resultText = describeReportOutcome({ result: currentResult, finalRuns, wicketsLost, chasingTeam: team2, defendingTeam: team1 });
   const matchTitle = currentInput.matchName || `${team1} vs ${team2}`;
   const firstTable = reportEventRows(currentInput.firstEvents);
   const secondTable = reportEventRows(currentInput.secondEvents);
@@ -713,8 +711,8 @@ function createReportHtml() {
     *{box-sizing:border-box}body{font:14px/1.5 Arial,sans-serif;color:#17263d;margin:0;background:#eef2f7}.page{max-width:900px;margin:24px auto;background:#fff;padding:38px 44px;box-shadow:0 8px 28px #12243a18}.top{border-bottom:3px solid #17395f;padding-bottom:18px;margin-bottom:22px}.eyebrow{font-size:11px;letter-spacing:.13em;color:#38649a;font-weight:bold;text-transform:uppercase}.top h1{font-size:27px;margin:5px 0;color:#132b49}.sub{color:#64748b}.meta,.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}.tile{border:1px solid #dbe3ed;border-radius:8px;padding:11px}.tile small{display:block;color:#718096;font-size:10px;text-transform:uppercase;font-weight:bold}.tile strong{display:block;font-size:16px;margin-top:4px}.section{margin:22px 0}.section h2{font-size:16px;color:#18385f;border-bottom:1px solid #dbe3ed;padding-bottom:7px}.callout{background:#edf5ff;border-left:4px solid #2a65ac;padding:14px 16px;margin:16px 0}.callout strong{font-size:18px}.result{background:#edf8f1;border-left:4px solid #258354;padding:14px 16px;margin:16px 0}.result strong{color:#17603f}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}th,td{text-align:left;padding:8px;border:1px solid #dbe3ed}th{background:#f0f4f8;color:#354a66}.foot{border-top:1px solid #dbe3ed;margin-top:30px;padding-top:12px;font-size:10px;color:#77869a}.actions{display:flex;gap:10px;justify-content:flex-end;margin:0 auto 18px;max-width:900px}.actions button{background:#245ea9;color:#fff;border:0;border-radius:7px;padding:10px 15px;font-weight:bold;cursor:pointer}@media(max-width:620px){.page{margin:0;padding:22px 16px}.meta,.stats{grid-template-columns:1fr 1fr}.actions{padding:12px;justify-content:stretch}.actions button{flex:1}}@media print{body{background:#fff}.page{box-shadow:none;margin:0 auto;padding:10mm;max-width:none}.actions{display:none}.section,.callout,.result{break-inside:avoid}}
     </style></head><body><div class="actions"><button onclick="window.print()">Print / Save as PDF</button></div><main class="page"><header class="top"><div class="eyebrow">DLS 6.0 · Match report</div><h1>${escapeHtml(matchTitle)}</h1><div class="sub">${escapeHtml(competition)} · ${escapeHtml(venue)} · ${escapeHtml(matchDate)}</div></header>
     <div class="meta"><div class="tile"><small>Captured by</small><strong>${escapeHtml(capturedBy)}</strong></div><div class="tile"><small>Match format</small><strong>${escapeHtml(currentInput.matchTypeLabel)}</strong></div><div class="tile"><small>Minimum overs per side</small><strong>${currentInput.minOversPerSide}</strong></div><div class="tile"><small>Overs at start</small><strong>${escapeHtml(formatOvers(currentInput.firstOvers))}</strong></div></div>
-    <section class="section"><h2>First innings — ${escapeHtml(team1)}</h2><div class="stats"><div class="tile"><small>Final score</small><strong>${currentInput.firstRuns}</strong></div><div class="tile"><small>Scheduled overs</small><strong>${escapeHtml(formatOvers(currentInput.firstOvers))}</strong></div><div class="tile"><small>First-innings penalty runs</small><strong>${currentInput.penaltyRuns || 0}</strong></div><div class="tile"><small>Overs lost</small><strong>${escapeHtml(prettyOvers(currentResult.firstResourcesLost))}</strong></div><div class="tile"><small>Overs available</small><strong>${escapeHtml(prettyOvers(currentResult.firstRemainingOvers))}</strong></div></div><h3>Interruption record</h3><table><thead><tr><th>#</th><th>Overs bowled</th><th>Score</th><th>Wickets</th><th>Overs lost</th></tr></thead><tbody>${firstTable}</tbody></table></section>
-    <section class="section"><h2>Second innings — ${escapeHtml(team2)}</h2><div class="stats"><div class="tile"><small>Target</small><strong>${currentResult.target}</strong></div><div class="tile"><small>Final score</small><strong>${finalRuns}${wicketsLost == null ? '' : `/${wicketsLost}`}</strong></div><div class="tile"><small>Second-innings penalty runs</small><strong>${secondInningsPenaltyRuns}</strong></div><div class="tile"><small>Effective score</small><strong>${effectiveFinalRuns}</strong></div><div class="tile"><small>Overs at finish</small><strong>${escapeHtml(finalOvers || 'Not entered')}</strong></div></div><p>The DLS target remains <strong>${currentResult.target}</strong>; second-innings penalty runs are applied only to the chasing team's result score. Overs allocated at start of chase: <strong>${escapeHtml(formatOvers(currentInput.secondOvers))}</strong>. Second-innings overs lost: <strong>${escapeHtml(prettyOvers(currentResult.secondResourcesLost))}</strong>. Revised chase length: <strong>${escapeHtml(currentResult.finalSecondOvers)}</strong>.</p><h3>Interruption record</h3><table><thead><tr><th>#</th><th>Overs bowled</th><th>Score</th><th>Wickets</th><th>Overs lost</th></tr></thead><tbody>${secondTable}</tbody></table></section>
+    <section class="section"><h2>First innings — ${escapeHtml(team1)}</h2><div class="stats"><div class="tile"><small>Final score</small><strong>${currentInput.firstRuns}</strong></div><div class="tile"><small>Scheduled overs</small><strong>${escapeHtml(formatOvers(currentInput.firstOvers))}</strong></div><div class="tile"><small>Overs lost</small><strong>${escapeHtml(prettyOvers(currentResult.firstResourcesLost))}</strong></div><div class="tile"><small>Overs available</small><strong>${escapeHtml(prettyOvers(currentResult.firstRemainingOvers))}</strong></div></div><h3>Interruption record</h3><table><thead><tr><th>#</th><th>Overs bowled</th><th>Score</th><th>Wickets</th><th>Overs lost</th></tr></thead><tbody>${firstTable}</tbody></table></section>
+    <section class="section"><h2>Second innings — ${escapeHtml(team2)}</h2><div class="stats"><div class="tile"><small>Target</small><strong>${currentResult.target}</strong></div><div class="tile"><small>Final score</small><strong>${finalRuns}${wicketsLost == null ? '' : `/${wicketsLost}`}</strong></div><div class="tile"><small>Penalty runs awarded to ${escapeHtml(team1)} while ${escapeHtml(team2)} were batting</small><strong>${currentInput.penaltyRuns || 0}</strong></div><div class="tile"><small>Overs at finish</small><strong>${escapeHtml(finalOvers || 'Not entered')}</strong></div></div><p>Penalty runs awarded to ${escapeHtml(team1)} while ${escapeHtml(team2)} were batting are included in the DLS target. Overs allocated at start of chase: <strong>${escapeHtml(formatOvers(currentInput.secondOvers))}</strong>. Second-innings overs lost: <strong>${escapeHtml(prettyOvers(currentResult.secondResourcesLost))}</strong>. Revised chase length: <strong>${escapeHtml(currentResult.finalSecondOvers)}</strong>.</p><h3>Interruption record</h3><table><thead><tr><th>#</th><th>Overs bowled</th><th>Score</th><th>Wickets</th><th>Overs lost</th></tr></thead><tbody>${secondTable}</tbody></table></section>
     <div class="callout"><div>Revised DLS target</div><strong>${currentResult.target} runs</strong></div><div class="result"><strong>RESULT</strong><br>${escapeHtml(resultText)}</div>
     <footer class="foot">Generated locally by the private DLS 6.0 Umpire Calculator. This report is a user-generated calculation summary, not an ICC-issued or certified match report. Verify official match decisions against the authorised DLS application and applicable playing conditions.</footer></main></body></html>`;
 }
@@ -868,7 +866,6 @@ function inputFromUiRaw(input) {
     secondOvers: input.firstOvers,
     secondOversNotation: formatOvers(input.firstOvers),
     penaltyRuns: input.penaltyRuns || 0,
-    secondInningsPenaltyRuns: input.secondInningsPenaltyRuns || 0,
     firstEventRows: input.firstEventRows || [],
     secondEventRows: input.secondEventRows || []
   };
@@ -890,11 +887,12 @@ function loadScenario(input) {
   $('autoSecondOvers').checked = true;
   $('secondOvers').value = String(input.firstOvers);
   $('penaltyRuns').value = input.penaltyRuns ?? 0;
-  $('secondPenaltyRuns').value = input.secondInningsPenaltyRuns ?? 0;
   $('firstEvents').replaceChildren();
   $('secondEvents').replaceChildren();
   (input.firstEventRows || []).forEach(row => addEventRow('firstEvents', row));
   (input.secondEventRows || []).forEach(row => addEventRow('secondEvents', row));
+  if (!$('firstEvents').children.length) addEventRow('firstEvents');
+  if (!$('secondEvents').children.length) addEventRow('secondEvents');
   updateEmptyMessages();
   syncSecondOversFromFirst();
   suspendAutoCalculation = false;
@@ -905,7 +903,6 @@ function loadScenario(input) {
     finalRuns: $('secondFinalRuns').value.trim() === '' ? null : Number($('secondFinalRuns').value),
     finalWickets: $('secondFinalWickets').value.trim() === '' ? null : Number($('secondFinalWickets').value),
     finalOvers: $('secondFinalOvers').value.trim() || null,
-    secondInningsPenaltyRuns: Number($('secondPenaltyRuns').value || 0),
     competition: $('reportCompetition').value.trim(),
     firstTeam: $('reportFirstTeam').value.trim(),
     secondTeam: $('reportSecondTeam').value.trim(),
