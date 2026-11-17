@@ -38,7 +38,7 @@
       <section class="panel match-panel">
         <div class="panel-heading">
           <div><div class="step-label">01 · MATCH DETAILS</div><h2>Match setup</h2></div>
-          <div class="panel-heading-actions"><span class="tag">Required</span><button class="button button-secondary" id="resetButton" type="button">Reset form</button></div>
+          <div class="panel-heading-actions"><button class="button button-secondary" id="resetButton" type="button">Reset form</button></div>
         </div>
         <div class="field-grid match-type-row">
           <label class="field"><span>Match type</span>
@@ -96,7 +96,6 @@
     <section id="results" class="results hidden" aria-live="polite">
       <div class="result-heading">
         <div><div class="step-label">04 · CALCULATION RESULT</div><h2 id="resultTitle">Revised target</h2><p id="resultSub" class="panel-hint"></p></div>
-        <span class="verified-tag"><span>●</span> Local calculation</span>
       </div>
       <div id="minimumOversOutcome" class="minimum-overs-outcome hidden" role="status" aria-live="polite"></div>
       <div class="result-grid">
@@ -105,9 +104,6 @@
           <div class="target-number" id="targetNumber">—</div>
           <div class="target-caption">Runs to win</div>
         </article>
-        <article class="metric-card"><div class="metric-label">First-innings lambda</div><div class="metric-value" id="lambdaValue">—</div><div class="metric-note">Fitted model parameter</div></article>
-        <article class="metric-card"><div class="metric-label">Adjustment factor</div><div class="metric-value" id="adjustmentValue">—</div><div class="metric-note">Applied to second innings</div></article>
-        <article class="metric-card"><div class="metric-label">Revised chase length</div><div class="metric-value" id="revisedOvers">—</div><div class="metric-note">After second-innings losses</div></article>
       </div>
       <div class="resource-summary" id="resourceSummary"></div>
 
@@ -125,8 +121,8 @@
           <summary>Additional report details (optional)</summary>
           <div class="field-grid field-grid-3 report-meta-grid">
             <label class="field"><span>Match / fixture name <small>optional</small></span><input id="matchName" type="text" placeholder="e.g. Tuks 2 vs Irene" maxlength="80"></label>
-            <label class="field"><span>Captured by — first name</span><input id="reportCapturerFirstName" type="text" autocomplete="given-name" maxlength="60" value="Name" placeholder="Name"></label>
-            <label class="field"><span>Captured by — surname</span><input id="reportCapturerSurname" type="text" autocomplete="family-name" maxlength="60" value="Surname" placeholder="Surname"></label>
+            <label class="field"><span>Captured by — first name</span><input id="reportCapturerFirstName" type="text" autocomplete="given-name" maxlength="60" placeholder="First name"></label>
+            <label class="field"><span>Captured by — surname</span><input id="reportCapturerSurname" type="text" autocomplete="family-name" maxlength="60" placeholder="Surname"></label>
             <label class="field"><span>Competition</span><input id="reportCompetition" type="text" maxlength="100" placeholder="e.g. Titans Premier League"></label>
             <label class="field"><span>Team batting first</span><input id="reportFirstTeam" type="text" maxlength="80" placeholder="First innings team"></label>
             <label class="field"><span>Team batting second</span><input id="reportSecondTeam" type="text" maxlength="80" placeholder="Chasing team"></label>
