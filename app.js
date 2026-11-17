@@ -739,16 +739,16 @@ function createReportHtml() {
 
     <section class="innings">
       <h2>First innings — ${escapeHtml(team1)}</h2>
-      <p class="narrative"><strong>${escapeHtml(team1)}</strong> scored <strong>${currentInput.firstRuns}</strong> runs.</p>
+      <p class="narrative"><strong>${escapeHtml(team1)}</strong> scored <strong>${currentInput.firstRuns}</strong> runs from a maximum of <strong>${escapeHtml(firstOvers)}</strong> overs.</p>
       <p class="detail-line">Scheduled overs: <strong>${escapeHtml(firstOvers)}</strong> &nbsp;·&nbsp; Overs lost: <strong>${escapeHtml(firstLost)}</strong> &nbsp;·&nbsp; Overs available: <strong>${escapeHtml(firstAvailable)}</strong></p>
       ${firstTable}
     </section>
 
     <section class="innings">
       <h2>Second innings — ${escapeHtml(team2)}</h2>
-      <p class="narrative"><strong>${escapeHtml(team2)}</strong> required <strong>${currentResult.target}</strong> runs to win from an initial allocation of <strong>${escapeHtml(secondStartOvers)}</strong> overs.</p>
+      <p class="narrative">The chase began with <strong>${escapeHtml(secondStartOvers)}</strong> overs available. Following the interruption(s), the revised allocation was <strong>${escapeHtml(revisedOvers)}</strong> overs and the revised target was <strong>${currentResult.target}</strong> runs.</p>
       <p class="narrative">The innings ended at <strong>${finalRuns}${wicketsLost == null ? '' : `/${wicketsLost}`}</strong>${finalOvers ? ` after ${escapeHtml(finalOvers)} overs` : ''}.</p>
-      <p class="detail-line">Overs lost: <strong>${escapeHtml(secondLost)}</strong> &nbsp;·&nbsp; Revised chase length: <strong>${escapeHtml(revisedOvers)}</strong> &nbsp;·&nbsp; Penalty runs awarded to ${escapeHtml(team1)} while ${escapeHtml(team2)} batted: <strong>${penaltyRuns}</strong></p>
+      <p class="detail-line">Overs lost: <strong>${escapeHtml(secondLost)}</strong> &nbsp;·&nbsp; Revised chase length: <strong>${escapeHtml(revisedOvers)}</strong> &nbsp;·&nbsp; Penalty runs to ${escapeHtml(team1)} while ${escapeHtml(team2)} batted: <strong>${penaltyRuns}</strong></p>
       ${secondTable}
     </section>
 
