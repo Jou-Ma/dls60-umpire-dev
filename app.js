@@ -1265,6 +1265,8 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
   if (scenarioEarliest) scenarioEarliest.addEventListener('input', updateScenarioTable);
   const minimumOversField = document.getElementById('minOversPerSide');
   if (minimumOversField) minimumOversField.addEventListener('input', updateScenarioTable);
+  const matchTypeField = document.getElementById('matchType');
+  if (matchTypeField) matchTypeField.addEventListener('change', updateScenarioTable);
   const resetButton = document.getElementById('resetAppendixA');
   if (resetButton) resetButton.addEventListener('click', () => {
     document.querySelectorAll('[data-calc]').forEach(el => { el.value = ''; });
