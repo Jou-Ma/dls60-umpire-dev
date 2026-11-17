@@ -13,10 +13,10 @@ let suspendAutoCalculation = false;
 let uploadInProgress = false;
 
 const MATCH_TYPES = {
-  odi: { overs: 50, minOvers: 20, label: 'ODI regulations (50 overs/innings)' },
-  t20: { overs: 20, minOvers: 5, label: 'Twenty20 (20 overs/innings)' },
+  odi: { overs: 50, minOvers: 20, minutesPerOver: 4.2, label: 'ODI regulations (50 overs/innings)' },
+  t20: { overs: 20, minOvers: 5, minutesPerOver: 4.25, label: 'Twenty20 (20 overs/innings)' },
   'other-50-10': { overs: 50, minOvers: 10, label: 'Other: 50 overs/innings' },
-  'other-45-20': { overs: 45, minOvers: 20, label: 'Other: 45 overs/innings' },
+  'other-45-20': { overs: 45, minOvers: 20, minutesPerOver: 3.75, label: 'Other: 45 overs/innings' },
   'other-40-10': { overs: 40, minOvers: 10, label: 'Other: 40 overs/innings' }
 };
 
@@ -133,33 +133,10 @@ function firstInningsAllocationPreview() {
 }
 
 function syncSecondOversFromFirst() {
-  const matchTypeSelected = !!$('matchType').value;
-  const automatic = $('autoSecondOvers').checked;
-  $('firstOvers').disabled = !matchTypeSelected;
-  $('secondOvers').disabled = !matchTypeSelected;
-  $('minOversPerSide').disabled = !matchTypeSelected;
-  $('secondOvers').readOnly = automatic;
-  $('secondOversModeLabel').textContent = automatic ? 'automatic' : 'manual override';
-  if (!matchTypeSelected) {
-    $('secondOvers').value = '';
-    $('secondOversHelp').textContent = 'Select a match type to allocate the chasing overs.';
-    return;
-  }
-  if (!automatic) {
-    $('secondOversHelp').textContent = 'Manual override is on. Enter the scheduled overs allocated to the chasing side in cricket notation.';
-    return;
-  }
-  const preview = firstInningsAllocationPreview();
-  if (!preview.valid) {
-    $('secondOversHelp').textContent = `${preview.message} The last valid allocation is retained until the entry is complete.`;
-    return;
-  }
-  $('secondOvers').value = preview.remainingOvers;
-  const totalLost = ballsToOvers(preview.totalLostBalls);
-  const scheduled = Number($('firstOvers').value);
-  $('secondOversHelp').textContent = preview.totalLostBalls
-    ? `${scheduled}.0 overs − ${totalLost} overs lost = ${preview.remainingOvers} overs automatically allocated to the chasing side.`
-    : `No first-innings overs lost: the chasing side is allocated ${preview.remainingOvers} overs.`;
+  // Both innings start with the same scheduled allocation. First-innings
+  // interruptions do not silently shorten the chasing side's starting allocation.
+  $('secondOvers').value = $('firstOvers').value.trim();
+  $('autoSecondOvers').checked = true;
 }
 $('autoSecondOvers').addEventListener('change', () => {
   syncSecondOversFromFirst();
@@ -173,6 +150,7 @@ $('firstRuns').addEventListener('input', handleCoreInputChange);
 $('secondOvers').addEventListener('input', handleCoreInputChange);
 $('minOversPerSide').addEventListener('input', handleCoreInputChange);
 $('penaltyRuns').addEventListener('input', handleCoreInputChange);
+$('secondPenaltyRuns').addEventListener('input', updateReportAvailability);
 $('customTimePerOver').addEventListener('input', handleCoreInputChange);
 $('matchName').addEventListener('input', handleCoreInputChange);
 $('reportCapturerFirstName').addEventListener('input', handleCoreInputChange);
@@ -183,36 +161,42 @@ function applyMatchType(type, { presetOvers = true, preserveOtherMinimum = false
   const isFixedMinimum = type === 'odi' || type === 't20';
   const isOther = type.startsWith('other-') || type === 'custom';
   const selected = !!type;
-
   $('firstOvers').disabled = !selected;
-  $('secondOvers').disabled = !selected;
   $('minOversPerSide').disabled = !selected;
   $('minOversPerSide').readOnly = isFixedMinimum;
-  const customRateField = $('customTimePerOver');
-  const customRateContainer = $('customTimePerOverField');
-  const requiresCustomRate = type === 'custom';
-  customRateContainer.hidden = !requiresCustomRate;
-  customRateField.disabled = !requiresCustomRate;
-  customRateField.required = requiresCustomRate;
+  const rateField = $('customTimePerOver');
+  const rateContainer = $('customTimePerOverField');
+  const knownPresetRate = preset?.minutesPerOver;
+  const hasKnownRate = Number.isFinite(knownPresetRate);
+  const rateIsEditable = selected && (!preset || !hasKnownRate);
+  rateContainer.hidden = !selected;
+  rateField.disabled = !selected;
+  rateField.readOnly = selected && !rateIsEditable;
+  rateField.required = selected;
+  $('timePerOverModeLabel').textContent = hasKnownRate ? 'fixed by match type' : (selected ? 'editable playing condition' : '');
+  $('timePerOverHelp').textContent = hasKnownRate
+    ? 'Preset rate. This value is independent of the Appendix A worksheet.'
+    : 'No preset rate is defined. Enter the applicable playing-condition allowance; this remains independent of Appendix A.';
   $('minimumOversModeLabel').textContent = isFixedMinimum ? 'fixed by match type' : 'editable playing condition';
-
   if (!selected) {
     $('firstOvers').value = '';
     $('minOversPerSide').value = '';
-    $('secondOvers').value = '';
+    rateField.value = '';
     $('minimumOversHelp').textContent = 'ODI defaults to 20; T20 defaults to 5.';
   } else if (preset) {
     if (presetOvers) $('firstOvers').value = String(preset.overs);
     if (!preserveOtherMinimum || isFixedMinimum) $('minOversPerSide').value = String(preset.minOvers);
+    if (hasKnownRate) rateField.value = String(knownPresetRate);
+    else if (presetOvers) rateField.value = '';
   } else if (type === 'custom') {
     if (presetOvers) {
       $('firstOvers').value = '';
       $('minOversPerSide').value = '';
+      rateField.value = '';
     } else if (!preserveOtherMinimum && (!$('minOversPerSide').value || Number($('minOversPerSide').value) < 1)) {
       $('minOversPerSide').value = '';
     }
   }
-
   if (isFixedMinimum) {
     $('minimumOversHelp').textContent = type === 'odi'
       ? 'ODI default: 20 minimum overs per side.'
@@ -222,7 +206,6 @@ function applyMatchType(type, { presetOvers = true, preserveOtherMinimum = false
   }
   syncSecondOversFromFirst();
 }
-
 $('matchType').addEventListener('change', () => {
   const nextType = $('matchType').value;
   const hasEvents = $('firstEvents').children.length || $('secondEvents').children.length;
@@ -244,12 +227,12 @@ function currentMatchTypeLabel() {
   const type = $('matchType').value;
   const min = Number($('minOversPerSide').value);
   const scheduled = Number($('firstOvers').value);
+  const rate = Number($('customTimePerOver').value);
   if (type === 'custom') {
-    const rate = Number($('customTimePerOver').value);
     return `Custom (${scheduled} overs/innings; minimum ${min} overs/side; ${rate} minutes/over)`;
   }
   const preset = MATCH_TYPES[type];
-  if (preset) return `${preset.label}; minimum ${min} overs/side`;
+  if (preset) return `${preset.label}; minimum ${min} overs/side; ${rate} minutes/over`;
   return $('matchType').selectedOptions[0]?.textContent || 'Custom match type';
 }
 
@@ -398,26 +381,21 @@ function validateFormControls() {
     }
   }
 
-  const penaltyText = $('penaltyRuns').value.trim();
-  if (penaltyText !== '') {
-    const penalty = Number(penaltyText);
-    if (!Number.isInteger(penalty) || penalty < 0 || penalty > 999) {
-      add('penaltyRuns', 'Penalty runs must be a whole number from 0 to 999.');
+  for (const [id, label] of [['penaltyRuns', 'First-innings penalty runs'], ['secondPenaltyRuns', 'Second-innings penalty runs']]) {
+    const penaltyText = $(id).value.trim();
+    if (penaltyText !== '') {
+      const penalty = Number(penaltyText);
+      if (!Number.isInteger(penalty) || penalty < 0 || penalty > 999) {
+        add(id, `${label} must be a whole number from 0 to 999.`);
+      }
     }
   }
-
-  let secondOvers = null;
-  if (hasType) {
-    const secondText = $('secondOvers').value.trim();
-    try {
-      if (!secondText) throw new Error('Second-innings scheduled overs are required.');
-      secondOvers = parseOvers(secondText, 'Second-innings scheduled overs');
-      if (!(secondOvers > 0 && secondOvers <= 100)) throw new Error('Must be greater than 0 and no more than 100 overs.');
-    } catch (error) {
-      add('secondOvers', error.message);
-      secondOvers = null;
-    }
+  const rateText = $('customTimePerOver').value.trim();
+  const rate = rateText === '' ? NaN : Number(rateText);
+  if (hasType && (!Number.isFinite(rate) || rate <= 0)) {
+    add('customTimePerOver', 'Enter a valid Time per Over greater than zero.');
   }
+  const secondOvers = firstOvers;
 
   if (firstOvers != null) {
     errors.push(...validateEventRows('firstEvents', firstOvers, 'First innings', Number.isFinite(firstRuns) ? firstRuns : null));
@@ -440,26 +418,27 @@ function collectInput() {
   const firstRows = readEventRows('firstEvents');
   const secondRows = readEventRows('secondEvents');
   const firstEvents = prepareEvents(firstRows, firstOvers, 'First innings');
-  const autoSecondOvers = $('autoSecondOvers').checked;
-  if (autoSecondOvers) syncSecondOversFromFirst();
-  const secondOvers = parseOvers($('secondOvers').value, 'Second-innings scheduled overs');
+  const secondOvers = firstOvers;
+  syncSecondOversFromFirst();
   const secondEvents = prepareEvents(secondRows, secondOvers, 'Second innings');
   const minOversPerSide = Number($('minOversPerSide').value);
   return {
     matchName: $('matchName').value.trim(),
-    customTimePerOver: $('matchType').value === 'custom' ? Number($('customTimePerOver').value) : null,
+    customTimePerOver: Number($('customTimePerOver').value),
+    timePerOver: Number($('customTimePerOver').value),
     capturerFirstName: $('reportCapturerFirstName').value.trim() || 'Name',
     capturerSurname: $('reportCapturerSurname').value.trim() || 'Surname',
     capturedBy: `${$('reportCapturerFirstName').value.trim() || 'Name'} ${$('reportCapturerSurname').value.trim() || 'Surname'}`,
     matchType: $('matchType').value,
     matchTypeLabel: currentMatchTypeLabel(),
     minOversPerSide,
-    autoSecondOvers,
+    autoSecondOvers: true,
     firstOvers,
     firstRuns,
     secondOvers,
-    secondOversNotation: $('secondOvers').value,
+    secondOversNotation: String(firstOvers),
     penaltyRuns: Number($('penaltyRuns').value || 0),
+    secondInningsPenaltyRuns: Number($('secondPenaltyRuns').value || 0),
     firstEvents,
     secondEvents,
     firstEventRows: firstRows,
@@ -525,6 +504,7 @@ function displayResult(input, result, { scroll = true, resetReport = false } = {
   $('lambdaValue').textContent = result.lambda.toFixed(4);
   $('adjustmentValue').textContent = result.adjustmentFactor.toFixed(9);
   $('revisedOvers').textContent = result.finalSecondOvers;
+  $('calculatedSecondOvers').textContent = result.finalSecondOvers;
   $('resourceSummary').replaceChildren();
   const chips = [
     `First-innings overs lost: ${prettyOvers(result.firstResourcesLost)}`,
@@ -532,7 +512,7 @@ function displayResult(input, result, { scroll = true, resetReport = false } = {
     `First-innings interruptions: ${input.firstEvents.length}`,
     `Second-innings interruptions: ${input.secondEvents.length}`,
     `Minimum overs per side: ${input.minOversPerSide}`,
-    `Chase allocation: ${input.autoSecondOvers ? 'automatic' : 'manual override'}`
+    `Time per Over: ${input.timePerOver}`
   ];
   for (const label of chips) {
     const chip = document.createElement('span');
@@ -591,6 +571,7 @@ $('matchForm').addEventListener('submit', (event) => {
 function clearOutput() {
   currentInput = null;
   currentResult = null;
+  $('calculatedSecondOvers').textContent = '—';
   $('results').classList.add('hidden');
   $('saveMessage').textContent = '';
   updateReportAvailability();
@@ -619,6 +600,8 @@ $('resetButton').addEventListener('click', () => {
   $('secondOvers').value = '';
   $('secondOvers').disabled = true;
   $('penaltyRuns').value = '0';
+  $('secondPenaltyRuns').value = '0';
+  $('calculatedSecondOvers').textContent = '—';
   ['secondFinalRuns','secondFinalWickets','secondFinalOvers','reportCompetition','reportFirstTeam','reportSecondTeam','reportVenue'].forEach(id => { if ($(id)) $(id).value = ''; });
   if ($('reportDate')) $('reportDate').value = new Date().toLocaleDateString('en-CA');
   $('firstEvents').replaceChildren();
@@ -657,6 +640,7 @@ function getReportReadiness() {
     finalRunsRaw: $('secondFinalRuns').value,
     wicketsRaw: $('secondFinalWickets').value,
     oversRaw: $('secondFinalOvers').value,
+    secondInningsPenaltyRunsRaw: $('secondPenaltyRuns').value,
     secondEvents: currentInput?.secondEvents || []
   });
 }
@@ -695,6 +679,7 @@ function updateReportAvailability() {
 $('secondFinalRuns').addEventListener('input', updateReportAvailability);
 $('secondFinalWickets').addEventListener('input', updateReportAvailability);
 $('secondFinalOvers').addEventListener('input', updateReportAvailability);
+$('secondPenaltyRuns').addEventListener('input', updateReportAvailability);
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[ch]));
@@ -717,7 +702,8 @@ function createReportHtml() {
   const dateValue = $('reportDate').value;
   const matchDate = dateValue ? new Date(`${dateValue}T12:00:00`).toLocaleDateString('en-ZA', { day:'2-digit', month:'short', year:'numeric' }) : new Date().toLocaleDateString('en-ZA', { day:'2-digit', month:'short', year:'numeric' });
   const capturedBy = `${$('reportCapturerFirstName').value.trim() || 'Name'} ${$('reportCapturerSurname').value.trim() || 'Surname'}`;
-  const resultText = describeReportOutcome({ result: currentResult, finalRuns, wicketsLost, chasingTeam: team2, defendingTeam: team1 });
+  const secondInningsPenaltyRuns = Number($('secondPenaltyRuns').value || 0);
+  const resultText = describeReportOutcome({ result: currentResult, finalRuns, secondInningsPenaltyRuns, wicketsLost, chasingTeam: team2, defendingTeam: team1 });
   const matchTitle = currentInput.matchName || `${team1} vs ${team2}`;
   const firstTable = reportEventRows(currentInput.firstEvents);
   const secondTable = reportEventRows(currentInput.secondEvents);
@@ -891,15 +877,16 @@ function loadScenario(input) {
   previousMatchType = $('matchType').value;
   applyMatchType(matchType, { presetOvers: false, preserveOtherMinimum: true });
   $('matchName').value = input.matchName || '';
-  $('customTimePerOver').value = input.customTimePerOver ?? '';
+  $('customTimePerOver').value = input.timePerOver ?? input.customTimePerOver ?? MATCH_TYPES[matchType]?.minutesPerOver ?? '';
   $('reportCapturerFirstName').value = input.capturerFirstName || 'Name';
   $('reportCapturerSurname').value = input.capturerSurname || 'Surname';
   $('firstOvers').value = input.firstOvers;
   $('firstRuns').value = input.firstRuns;
   $('minOversPerSide').value = input.minOversPerSide ?? (MATCH_TYPES[matchType]?.minOvers ?? '');
-  $('autoSecondOvers').checked = input.autoSecondOvers !== false;
-  $('secondOvers').value = input.secondOversNotation || formatOvers(input.secondOvers);
+  $('autoSecondOvers').checked = true;
+  $('secondOvers').value = String(input.firstOvers);
   $('penaltyRuns').value = input.penaltyRuns ?? 0;
+  $('secondPenaltyRuns').value = input.secondInningsPenaltyRuns ?? 0;
   $('firstEvents').replaceChildren();
   $('secondEvents').replaceChildren();
   (input.firstEventRows || []).forEach(row => addEventRow('firstEvents', row));
@@ -914,6 +901,7 @@ function loadScenario(input) {
     finalRuns: $('secondFinalRuns').value.trim() === '' ? null : Number($('secondFinalRuns').value),
     finalWickets: $('secondFinalWickets').value.trim() === '' ? null : Number($('secondFinalWickets').value),
     finalOvers: $('secondFinalOvers').value.trim() || null,
+    secondInningsPenaltyRuns: Number($('secondPenaltyRuns').value || 0),
     competition: $('reportCompetition').value.trim(),
     firstTeam: $('reportFirstTeam').value.trim(),
     secondTeam: $('reportSecondTeam').value.trim(),
