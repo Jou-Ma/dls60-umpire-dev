@@ -131,8 +131,8 @@ For each test, retain the input sheet, official reference output, application ou
 
 ### 8.2 Innings controls and allocation
 
-- [ ] First-innings total runs and first-innings penalty runs appear in section 02 above interruption events.
-- [ ] Second-innings penalty runs appear in section 03 above interruption events.
+- [ ] First-innings total runs appear in section 02 above interruption events.
+- [ ] Exactly one penalty-runs field appears below the Chasing Team interruptions table, labelled as penalty runs awarded to Team 1 while Team 2 is batting.
 - [ ] The visible second-innings scheduled-overs override is removed.
 - [ ] The chase's starting scheduled allocation always equals Overs per innings, irrespective of first-innings interruption losses.
 - [ ] Legacy saved/imported scenarios ignore any old second-innings overs override and use the first-innings scheduled overs for both innings.
@@ -140,11 +140,15 @@ For each test, retain the input sheet, official reference output, application ou
 
 ### 8.3 Penalty-run result handling
 
-- [ ] First-innings penalty runs continue to affect the DLS target as before.
-- [ ] Second-innings penalty runs do not change the DLS target or resource tables.
-- [ ] The chasing side's effective result score equals its actual final score plus second-innings penalty runs.
-- [ ] Win, tie and runs-margin outcomes use the effective score.
-- [ ] The generated report displays the actual score, second-innings penalty runs and effective score separately.
-- [ ] Saved/exported scenarios preserve both innings' penalty-run values; older scenarios default the second-innings penalty to zero.
+- [ ] The single penalty-runs value is passed to the DLS calculation as penalty runs awarded to Team 1 while Team 2 is batting.
+- [ ] The penalty value affects the revised target in accordance with the existing DLS calculation; it is not added again to Team 2's final score.
+- [ ] The generated report identifies the penalty runs as awarded to Team 1 while Team 2 was batting.
+
+### 8.4 Default interruption rows
+- [ ] One blank event row is present by default in First Innings.
+- [ ] One blank event row is present by default in Second Innings.
+- [ ] Blank default rows do not trigger validation errors or affect DLS calculations.
+- [ ] Reset restores one blank row in each innings.
+- [ ] Loading a saved scenario with no interruptions restores one blank row in each innings.
 
 **Verification status:** Not yet browser-tested. Complete the checklist on Development before any request to promote these changes to Production.
