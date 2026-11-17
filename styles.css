@@ -135,3 +135,12 @@
 .calc-field-error:not(:empty){display:block;color:var(--red);font-size:10px;font-weight:650;line-height:1.35;margin-top:4px}
 .calc-sheet tr.is-invalid input{border-color:var(--red)!important;background:#fff7f6!important;box-shadow:0 0 0 3px #b4231812!important}
 .calc-sheet tr.is-invalid td:nth-child(2){color:var(--red)!important;font-weight:700}
+
+/* Recommencement-time scenario table */
+.scenario-controls{margin:4px 0 14px}
+.scenario-summary{padding:11px 13px;margin:0 0 12px;border:1px solid var(--line);border-radius:9px;background:#f7f9fc;color:#40516a;font-size:11px;line-height:1.5}
+.scenario-table-wrap{margin-top:8px}
+.scenario-table{min-width:620px}
+.scenario-table td{font-variant-numeric:tabular-nums}
+.scenario-table tr.scenario-draw td:last-child{color:var(--red);font-weight:800}
+.scenario-table tbody tr:not(.scenario-draw) td:last-child{color:var(--green);font-weight:800}
