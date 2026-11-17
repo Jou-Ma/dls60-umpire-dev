@@ -110,3 +110,41 @@ Maintain a separate reproducible test case for each of the following:
 ## 7. Test evidence register
 
 For each test, retain the input sheet, official reference output, application output and a short comparison record. Do not rely solely on a statement that two results matched.
+
+
+## 8. Development UX change — pending user verification
+
+**Scope:** Development branch only. This section is a retest checklist, not evidence that the checks have passed.
+
+### 8.1 Match setup and Time per Over
+
+- [ ] Match Type is the only field on the first setup row on desktop and mobile.
+- [ ] The next row is ordered Overs per innings, Time per Over, Minimum overs per side.
+- [ ] ODI displays 4.2 minutes per over as read-only.
+- [ ] T20 displays 4.25 minutes per over as read-only.
+- [ ] Promotion League – 45 Overs displays 3.75 minutes per over as read-only.
+- [ ] Women's League – 35 Overs displays 3.75 minutes per over as read-only; minimum overs remains editable and required.
+- [ ] Women's T20 displays 3.75 minutes per over as read-only; minimum overs remains editable and required.
+- [ ] Generic 50-over and 40-over presets have an editable, required Time per Over value.
+- [ ] Custom match type has editable overs, minimum overs and Time per Over.
+- [ ] Time per Over remains independent of the Appendix A worksheet; changing either setting does not change the other.
+
+### 8.2 Innings controls and allocation
+
+- [ ] First-innings total runs and first-innings penalty runs appear in section 02 above interruption events.
+- [ ] Second-innings penalty runs appear in section 03 above interruption events.
+- [ ] The visible second-innings scheduled-overs override is removed.
+- [ ] The chase's starting scheduled allocation always equals Overs per innings, irrespective of first-innings interruption losses.
+- [ ] Legacy saved/imported scenarios ignore any old second-innings overs override and use the first-innings scheduled overs for both innings.
+- [ ] The calculated second-innings overs are displayed in section 03 and reflect second-innings interruption losses.
+
+### 8.3 Penalty-run result handling
+
+- [ ] First-innings penalty runs continue to affect the DLS target as before.
+- [ ] Second-innings penalty runs do not change the DLS target or resource tables.
+- [ ] The chasing side's effective result score equals its actual final score plus second-innings penalty runs.
+- [ ] Win, tie and runs-margin outcomes use the effective score.
+- [ ] The generated report displays the actual score, second-innings penalty runs and effective score separately.
+- [ ] Saved/exported scenarios preserve both innings' penalty-run values; older scenarios default the second-innings penalty to zero.
+
+**Verification status:** Not yet browser-tested. Complete the checklist on Development before any request to promote these changes to Production.
