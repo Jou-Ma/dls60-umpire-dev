@@ -55,9 +55,9 @@
             </select>
             <small id="matchTypeError" class="field-error" aria-live="polite"></small>
           </label>
-          <label class="field"><span>Match / fixture name <small>optional</small></span><input id="matchName" type="text" placeholder="e.g. Tuks 2 vs Irene" maxlength="80"></label>
           <label class="field"><span>First-innings scheduled overs</span><input id="firstOvers" type="number" min="1" max="100" step="1" placeholder="Select match type first" disabled required><small class="field-error" aria-live="polite"></small></label>
           <label class="field"><span>First-innings total runs</span><input id="firstRuns" type="number" min="0" max="999" step="1" placeholder="Enter final innings total" required><small class="field-error" aria-live="polite"></small></label>
+          <label class="field" id="customTimePerOverField" hidden><span>Time per over (minutes)</span><input id="customTimePerOver" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="e.g. 4.2" disabled><small class="field-help">Enter the applicable playing-condition allowance for this custom match type.</small><small class="field-error" aria-live="polite"></small></label>
         </div>
         <div class="field-grid field-grid-3 field-grid-bottom">
           <label class="field"><span>Second-innings scheduled overs <small id="secondOversModeLabel">automatic</small></span><input id="secondOvers" type="text" inputmode="decimal" placeholder="Set by match setup" disabled readonly required><small id="secondOversHelp" class="field-help">Select a match type to allocate the chasing overs.</small><small class="field-error" aria-live="polite"></small></label>
@@ -127,6 +127,7 @@
         <details class="report-details">
           <summary>Additional report details (optional)</summary>
           <div class="field-grid field-grid-3 report-meta-grid">
+            <label class="field"><span>Match / fixture name <small>optional</small></span><input id="matchName" type="text" placeholder="e.g. Tuks 2 vs Irene" maxlength="80"></label>
             <label class="field"><span>Captured by — first name</span><input id="reportCapturerFirstName" type="text" autocomplete="given-name" maxlength="60" value="Name" placeholder="Name"></label>
             <label class="field"><span>Captured by — surname</span><input id="reportCapturerSurname" type="text" autocomplete="family-name" maxlength="60" value="Surname" placeholder="Surname"></label>
             <label class="field"><span>Competition</span><input id="reportCompetition" type="text" maxlength="100" placeholder="e.g. Titans Premier League"></label>
