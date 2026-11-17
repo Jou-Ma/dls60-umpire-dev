@@ -1193,17 +1193,82 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     setTime('d-l', dl);
     setBowlingRestriction('d-bowler', dj);
     setPowerplay('d', dj);
+    updateScenarioTable();
   };
   if (competitionSelect) competitionSelect.addEventListener('change', updateCompetitionRate);
   if (timePerOverField) {
     timePerOverField.addEventListener('input', update);
     timePerOverField.addEventListener('change', update);
   }
+  const scenarioSource = document.getElementById('scenarioCessationSource');
+  const scenarioEarliest = document.getElementById('scenarioEarliestRestart');
+  const scenarioSummary = document.getElementById('scenarioSummary');
+  const scenarioRows = document.getElementById('scenarioRows');
+  const formatScenarioTime = minutes => {
+    const wrapped = ((Math.round(minutes) % 1440) + 1440) % 1440;
+    return String(Math.floor(wrapped / 60)).padStart(2, '0') + ':' + String(wrapped % 60).padStart(2, '0');
+  };
+  const updateScenarioTable = () => {
+    if (!scenarioSource || !scenarioEarliest || !scenarioRows || !scenarioSummary) return;
+    const source = scenarioSource.value;
+    const cessation = source ? timeMinutes(source) : null;
+    const earliest = scenarioEarliest.value && /^\\d{2}:\\d{2}$/.test(scenarioEarliest.value)
+      ? (() => { const [h,m] = scenarioEarliest.value.split(':').map(Number); return h * 60 + m; })()
+      : null;
+    const minimumOvers = Number(document.getElementById('minOversPerSide')?.value);
+    const timePerOver = selectedTimePerOver();
+    const missing = [];
+    if (!source) missing.push('select the applicable cessation-time source');
+    if (cessation == null) missing.push('complete the selected Appendix A cessation-time calculation');
+    if (earliest == null) missing.push('enter the earliest proposed recommencement time');
+    if (!Number.isInteger(minimumOvers) || minimumOvers < 1) missing.push('set a valid Minimum Overs per Side in Match Setup');
+    if (timePerOver == null) missing.push('select a competition and valid Time per Over');
+    if (missing.length) {
+      scenarioSummary.textContent = 'To generate scenarios: ' + missing.join('; ') + '.';
+      scenarioRows.innerHTML = '<tr><td colspan="4">Complete the scenario inputs to generate the table.</td></tr>';
+      return;
+    }
+    let cessationTimeline = cessation;
+    if (earliest > cessationTimeline) cessationTimeline += 1440;
+    if (earliest >= cessationTimeline) {
+      scenarioSummary.textContent = 'The proposed recommencement time must be before the selected cessation time.';
+      scenarioRows.innerHTML = '<tr><td colspan="4">Check the recommencement and cessation times.</td></tr>';
+      return;
+    }
+    const cutOff = cessationTimeline - minimumOvers * timePerOver;
+    const finalWindowStart = cessationTimeline - 15;
+    const scenarioTimes = [];
+    for (let t = earliest; t < finalWindowStart; t += 15) scenarioTimes.push(t);
+    if (finalWindowStart >= earliest) scenarioTimes.push(finalWindowStart);
+    for (let t = Math.max(earliest, finalWindowStart) + 5; t <= cessationTimeline; t += 5) scenarioTimes.push(t);
+    if (!scenarioTimes.length || scenarioTimes[0] !== earliest) scenarioTimes.unshift(earliest);
+    const uniqueTimes = [...new Set(scenarioTimes)].filter(t => t >= earliest && t <= cessationTimeline).sort((a,b) => a-b);
+    const rows = uniqueTimes.map(restart => {
+      const available = Math.max(0, cessationTimeline - restart);
+      const overs = Math.floor(available / timePerOver + 1e-9);
+      const achievable = restart <= cutOff + 1e-9 && overs >= minimumOvers;
+      const outcome = achievable ? 'Minimum overs achievable' : 'Draw';
+      return '<tr' + (achievable ? '' : ' class="scenario-draw"') + '><td>' + formatScenarioTime(restart) + '</td><td>' + available + ' min</td><td>' + overs + '</td><td>' + outcome + '</td></tr>';
+    });
+    scenarioSummary.textContent = 'Cessation: ' + formatScenarioTime(cessationTimeline) +
+      ' · Minimum overs: ' + minimumOvers +
+      ' · Minimum-overs cut-off: ' + formatScenarioTime(cutOff) +
+      ' · Time per over: ' + timePerOver + ' min. ' +
+      'The final 15 minutes are shown in 5-minute increments.';
+    scenarioRows.innerHTML = rows.join('') || '<tr><td colspan="4">No recommencement scenarios fall within the selected period.</td></tr>';
+  };
+  if (scenarioSource) scenarioSource.addEventListener('change', updateScenarioTable);
+  if (scenarioEarliest) scenarioEarliest.addEventListener('input', updateScenarioTable);
+  const minimumOversField = document.getElementById('minOversPerSide');
+  if (minimumOversField) minimumOversField.addEventListener('input', updateScenarioTable);
   const resetButton = document.getElementById('resetAppendixA');
   if (resetButton) resetButton.addEventListener('click', () => {
     document.querySelectorAll('[data-calc]').forEach(el => { el.value = ''; });
     if (competitionSelect) competitionSelect.value = '';
+    if (scenarioSource) scenarioSource.value = '';
+    if (scenarioEarliest) scenarioEarliest.value = '';
     updateCompetitionRate();
+    updateScenarioTable();
   });
   document.querySelectorAll('[data-calc]').forEach(el => {
     el.addEventListener('input', update);
