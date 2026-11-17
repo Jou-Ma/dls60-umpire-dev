@@ -134,9 +134,11 @@ For each test, retain the input sheet, official reference output, application ou
 - [ ] First-innings total runs appear in section 02 above interruption events.
 - [ ] Exactly one penalty-runs field appears below the Chasing Team interruptions table, labelled as penalty runs awarded to Team 1 while Team 2 is batting.
 - [ ] The visible second-innings scheduled-overs override is removed.
-- [ ] The chase's starting scheduled allocation always equals Overs per innings, irrespective of first-innings interruption losses.
-- [ ] Legacy saved/imported scenarios ignore any old second-innings overs override and use the first-innings scheduled overs for both innings.
-- [ ] The calculated second-innings overs are displayed in section 03 and reflect second-innings interruption losses.
+- [ ] The chase's starting scheduled allocation equals Overs per innings less the cumulative first-innings interruption overs lost.
+- [ ] Changing first-innings interruption entries recalculates the chasing allocation immediately; incomplete/invalid first-innings entries must not leave a stale allocation available for calculation.
+- [ ] Legacy saved/imported scenarios ignore any old second-innings overs override and derive the chasing allocation from the first-innings schedule and interruption losses.
+- [ ] The calculated second-innings overs are displayed in section 03 after applying both the revised chasing allocation and any second-innings interruption losses.
+- [ ] Regression: Custom 65 overs, 3.75 minutes per over, 25 minimum; first-innings interruption at 13.2, 69 runs, 2 wickets, 12 overs lost. The chasing allocation must update to 53.0 overs.
 
 ### 8.3 Penalty-run result handling
 
