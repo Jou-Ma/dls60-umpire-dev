@@ -730,7 +730,7 @@ function createReportHtml() {
       <div class="sub">${escapeHtml(competition)} &nbsp;·&nbsp; ${escapeHtml(venue)} &nbsp;·&nbsp; ${escapeHtml(matchDate)}</div>
     </header>
     <div class="match-facts">
-      <span><strong>Format:</strong> ${escapeHtml(currentInput.matchTypeLabel)}; minimum ${currentInput.minOversPerSide} overs per side</span>
+      <span><strong>Format:</strong> ${escapeHtml(currentInput.matchTypeLabel.replace(/;\s*minimum\s+\d+\s+overs\/side(?=\)|$)/i, ''))}; minimum ${currentInput.minOversPerSide} overs per side</span>
     </div>
 
     <section class="innings">
