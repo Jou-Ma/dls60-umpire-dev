@@ -12,6 +12,7 @@ This documentation set is maintained separately from the calculator interface. T
 2. [Technical Documentation](TECHNICAL-DOCUMENTATION.md) — application architecture, calculation engine and supporting services.
 3. [Testing & Validation Report](TESTING-VALIDATION.md) — test scenarios and comparisons with the official ICC DLS 6.0 calculator.
 4. [Release Notes & Build History](RELEASE-HISTORY.md) — build changes and formal product releases.
+5. [Development Backlog](DEVELOPMENT-BACKLOG.md) — deferred enhancements and agreed future work.
 
 ## Documentation conventions
 
