@@ -13,12 +13,12 @@ let suspendAutoCalculation = false;
 let uploadInProgress = false;
 
 const MATCH_TYPES = {
-  odi: { overs: 50, minOvers: 20, minutesPerOver: 4.2, label: 'ODI regulations (50 overs/innings)' },
-  t20: { overs: 20, minOvers: 5, minutesPerOver: 4.25, label: 'Twenty20 (20 overs/innings)' },
+  odi: { overs: 50, minOvers: 20, label: 'ODI regulations (50 overs/innings)' },
+  t20: { overs: 20, minOvers: 55, label: 'Twenty20 (20 overs/innings)' },
   'other-50-10': { overs: 50, minOvers: 10, label: 'Other: 50 overs/innings' },
-  'other-45-20': { overs: 45, minOvers: 20, minutesPerOver: 3.75, label: 'Promotion League (45 overs/innings)' },
-  'womens-35': { overs: 35, minOvers: null, minutesPerOver: 3.75, label: "Women's League (35 overs/innings)" },
-  'womens-t20': { overs: 20, minOvers: null, minutesPerOver: 3.75, label: "Women's T20 (20 overs/innings)" },
+  'other-45-20': { overs: 45, minOvers: 20, label: 'Promotion League (45 overs/innings)' },
+  'womens-35': { overs: 35, minOvers: null, label: "Women's League (35 overs/innings)" },
+  'womens-t20': { overs: 20, minOvers: null, label: "Women's T20 (20 overs/innings)" },
   'other-40-10': { overs: 40, minOvers: 10, label: 'Other: 40 overs/innings' }
 };
 
@@ -157,7 +157,6 @@ $('firstRuns').addEventListener('input', handleCoreInputChange);
 $('secondOvers').addEventListener('input', handleCoreInputChange);
 $('minOversPerSide').addEventListener('input', handleCoreInputChange);
 $('penaltyRuns').addEventListener('input', handleCoreInputChange);
-$('customTimePerOver').addEventListener('input', handleCoreInputChange);
 $('matchName').addEventListener('input', handleCoreInputChange);
 $('reportCapturerFirstName').addEventListener('input', handleCoreInputChange);
 $('reportCapturerSurname').addEventListener('input', handleCoreInputChange);
@@ -170,24 +169,9 @@ function applyMatchType(type, { presetOvers = true, preserveOtherMinimum = false
   $('firstOvers').disabled = !selected;
   $('minOversPerSide').disabled = !selected;
   $('minOversPerSide').readOnly = isFixedMinimum;
-  const rateField = $('customTimePerOver');
-  const rateContainer = $('customTimePerOverField');
-  const knownPresetRate = preset?.minutesPerOver;
-  const hasKnownRate = Number.isFinite(knownPresetRate);
-  const rateIsEditable = selected && (!preset || !hasKnownRate);
-  rateContainer.hidden = !selected;
-  rateField.disabled = !selected;
-  rateField.readOnly = selected && !rateIsEditable;
-  rateField.required = selected;
-  $('timePerOverModeLabel').textContent = hasKnownRate ? 'fixed by match type' : (selected ? 'editable playing condition' : '');
-  $('dlsTimePerOverHelp').textContent = hasKnownRate
-    ? 'Preset rate. This value is independent of the Appendix A worksheet.'
-    : 'No preset rate is defined. Enter the applicable playing-condition allowance; this remains independent of Appendix A.';
-  $('minimumOversModeLabel').textContent = isFixedMinimum ? 'fixed by match type' : 'editable playing condition';
   if (!selected) {
     $('firstOvers').value = '';
     $('minOversPerSide').value = '';
-    rateField.value = '';
     $('minimumOversHelp').textContent = 'ODI defaults to 20; T20 defaults to 5.';
   } else if (preset) {
     if (presetOvers) $('firstOvers').value = String(preset.overs);
@@ -196,14 +180,11 @@ function applyMatchType(type, { presetOvers = true, preserveOtherMinimum = false
     } else if (!preserveOtherMinimum || isFixedMinimum) {
       $('minOversPerSide').value = String(preset.minOvers);
     }
-    if (hasKnownRate) rateField.value = String(knownPresetRate);
-    else if (presetOvers) rateField.value = '';
   } else if (type === 'custom') {
     if (presetOvers) {
       $('firstOvers').value = '';
       $('minOversPerSide').value = '';
-      rateField.value = '';
-    } else if (!preserveOtherMinimum && (!$('minOversPerSide').value || Number($('minOversPerSide').value) < 1)) {
+      } else if (!preserveOtherMinimum && (!$('minOversPerSide').value || Number($('minOversPerSide').value) < 1)) {
       $('minOversPerSide').value = '';
     }
   }
@@ -212,7 +193,7 @@ function applyMatchType(type, { presetOvers = true, preserveOtherMinimum = false
       ? 'ODI default: 20 minimum overs per side.'
       : 'T20 default: 5 minimum overs per side.';
   } else if (isOther) {
-    $('minimumOversHelp').textContent = 'Set the minimum overs required by this competition’s playing conditions.';
+    $('minimumOversHelp').textContent = 'Enter the minimum overs required for each side.'
   }
   syncSecondOversFromFirst();
 }
@@ -245,12 +226,11 @@ function currentMatchTypeLabel() {
   const type = $('matchType').value;
   const min = Number($('minOversPerSide').value);
   const scheduled = Number($('firstOvers').value);
-  const rate = Number($('customTimePerOver').value);
   if (type === 'custom') {
-    return `Custom (${scheduled} overs/innings; minimum ${min} overs/side; ${rate} minutes/over)`;
+    return `Custom (${scheduled} overs/innings; minimum ${min} overs/side)`;
   }
   const preset = MATCH_TYPES[type];
-  if (preset) return `${preset.label}; minimum ${min} overs/side; ${rate} minutes/over`;
+  if (preset) return `${preset.label}; minimum ${min} overs/side`;
   return $('matchType').selectedOptions[0]?.textContent || 'Custom match type';
 }
 
@@ -402,11 +382,6 @@ function validateFormControls() {
       add('penaltyRuns', 'Penalty runs must be a whole number from 0 to 999.');
     }
   }
-  const rateText = $('customTimePerOver').value.trim();
-  const rate = rateText === '' ? NaN : Number(rateText);
-  if (hasType && (!Number.isFinite(rate) || rate <= 0)) {
-    add('customTimePerOver', 'Enter a valid Time per Over greater than zero.');
-  }
   const allocation = firstInningsAllocationPreview();
   const secondOvers = allocation.valid ? parseOvers(allocation.remainingOvers) : null;
 
@@ -439,8 +414,6 @@ function collectInput() {
   const minOversPerSide = Number($('minOversPerSide').value);
   return {
     matchName: $('matchName').value.trim(),
-    customTimePerOver: Number($('customTimePerOver').value),
-    timePerOver: Number($('customTimePerOver').value),
     capturerFirstName: $('reportCapturerFirstName').value.trim() || 'Name',
     capturerSurname: $('reportCapturerSurname').value.trim() || 'Surname',
     capturedBy: `${$('reportCapturerFirstName').value.trim() || 'Name'} ${$('reportCapturerSurname').value.trim() || 'Surname'}`,
@@ -594,10 +567,6 @@ $('resetButton').addEventListener('click', () => {
   suspendAutoCalculation = true;
   validationStarted = false;
   $('matchName').value = '';
-  $('customTimePerOver').value = '';
-  $('customTimePerOverField').hidden = true;
-  $('customTimePerOver').disabled = true;
-  $('customTimePerOver').required = false;
   $('reportCapturerFirstName').value = 'Name';
   $('reportCapturerSurname').value = 'Surname';
   $('matchType').value = '';
@@ -608,7 +577,6 @@ $('resetButton').addEventListener('click', () => {
   $('minOversPerSide').value = '';
   $('minOversPerSide').readOnly = true;
   $('minOversPerSide').disabled = true;
-  $('minimumOversModeLabel').textContent = 'set by match type';
   $('minimumOversHelp').textContent = 'ODI defaults to 20; T20 defaults to 5.';
   $('autoSecondOvers').checked = true;
   $('secondOvers').value = '';
@@ -864,8 +832,6 @@ $('syncNow').addEventListener('click', () => uploadPendingMatches());
 function inputFromUiRaw(input) {
   return {
     matchName: input.matchName || '',
-    customTimePerOver: input.timePerOver ?? input.customTimePerOver ?? null,
-    timePerOver: input.timePerOver ?? input.customTimePerOver ?? null,
     capturerFirstName: input.capturerFirstName || 'Name',
     capturerSurname: input.capturerSurname || 'Surname',
     capturedBy: input.capturedBy || `${input.capturerFirstName || 'Name'} ${input.capturerSurname || 'Surname'}`.trim(),
@@ -890,7 +856,6 @@ function loadScenario(input) {
   previousMatchType = $('matchType').value;
   applyMatchType(matchType, { presetOvers: false, preserveOtherMinimum: true });
   $('matchName').value = input.matchName || '';
-  $('customTimePerOver').value = input.timePerOver ?? input.customTimePerOver ?? MATCH_TYPES[matchType]?.minutesPerOver ?? '';
   $('reportCapturerFirstName').value = input.capturerFirstName || 'Name';
   $('reportCapturerSurname').value = input.capturerSurname || 'Surname';
   $('firstOvers').value = input.firstOvers;
