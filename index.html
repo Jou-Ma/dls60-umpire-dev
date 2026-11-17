@@ -258,8 +258,8 @@
         <div class="calc-table-wrap"><table class="calc-sheet"><thead><tr><th>Ref.</th><th>Calculation / description</th><th>Entry</th></tr></thead><tbody>
           <tr><td>A</td><td>Time at start of innings</td><td><input data-calc="d-a" type="time"></td></tr>
           <tr><td>B</td><td>Time at start of interruption</td><td><input data-calc="d-b" type="time"></td></tr>
-          <tr><td>C</td><td>Time innings in progress</td><td><input data-calc="d-c" inputmode="numeric" placeholder="Minutes"></td></tr>
-          <tr><td>D</td><td>Restart time</td><td><input data-calc="d-d" type="time"></td></tr>
+          <tr><td>C</td><td>Time innings in progress [B – A]</td><td><input data-calc="d-c" inputmode="numeric" placeholder="Calculated" readonly aria-readonly="true"></td></tr>
+          <tr><td>D</td><td>Restart time</td><td><input data-calc="d-d" type="time"><small class="calc-field-error" id="d-d-error" aria-live="polite"></small></td></tr>
           <tr><td>E</td><td>Length of interruption [D – B]</td><td><input data-calc="d-e" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
           <tr><td>F</td><td>Additional time available (any unused provision for ‘Extra Time’ or for earlier than scheduled start of second innings)</td><td><input data-calc="d-f" inputmode="numeric" placeholder="Minutes"></td></tr>
           <tr><td>G</td><td>Total playing time lost [E – F]</td><td><input data-calc="d-g" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
