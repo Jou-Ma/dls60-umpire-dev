@@ -173,6 +173,7 @@ $('firstRuns').addEventListener('input', handleCoreInputChange);
 $('secondOvers').addEventListener('input', handleCoreInputChange);
 $('minOversPerSide').addEventListener('input', handleCoreInputChange);
 $('penaltyRuns').addEventListener('input', handleCoreInputChange);
+$('customTimePerOver').addEventListener('input', handleCoreInputChange);
 $('matchName').addEventListener('input', handleCoreInputChange);
 $('reportCapturerFirstName').addEventListener('input', handleCoreInputChange);
 $('reportCapturerSurname').addEventListener('input', handleCoreInputChange);
@@ -187,6 +188,12 @@ function applyMatchType(type, { presetOvers = true, preserveOtherMinimum = false
   $('secondOvers').disabled = !selected;
   $('minOversPerSide').disabled = !selected;
   $('minOversPerSide').readOnly = isFixedMinimum;
+  const customRateField = $('customTimePerOver');
+  const customRateContainer = $('customTimePerOverField');
+  const requiresCustomRate = type === 'custom';
+  customRateContainer.hidden = !requiresCustomRate;
+  customRateField.disabled = !requiresCustomRate;
+  customRateField.required = requiresCustomRate;
   $('minimumOversModeLabel').textContent = isFixedMinimum ? 'fixed by match type' : 'editable playing condition';
 
   if (!selected) {
@@ -237,7 +244,10 @@ function currentMatchTypeLabel() {
   const type = $('matchType').value;
   const min = Number($('minOversPerSide').value);
   const scheduled = Number($('firstOvers').value);
-  if (type === 'custom') return `Custom (${scheduled} overs/innings; minimum ${min} overs/side)`;
+  if (type === 'custom') {
+    const rate = Number($('customTimePerOver').value);
+    return `Custom (${scheduled} overs/innings; minimum ${min} overs/side; ${rate} minutes/over)`;
+  }
   const preset = MATCH_TYPES[type];
   if (preset) return `${preset.label}; minimum ${min} overs/side`;
   return $('matchType').selectedOptions[0]?.textContent || 'Custom match type';
@@ -372,6 +382,12 @@ function validateFormControls() {
     add('firstRuns', 'Enter the first-innings total as a whole number from 0 to 999.');
   }
 
+  if (type === 'custom') {
+    const rateText = $('customTimePerOver').value.trim();
+    const rate = rateText === '' ? NaN : Number(rateText);
+    if (!Number.isFinite(rate) || rate <= 0) add('customTimePerOver', 'Enter a valid Time per Over greater than zero.');
+  }
+
   if (hasType) {
     const minimumText = $('minOversPerSide').value.trim();
     const minimum = minimumText === '' ? NaN : Number(minimumText);
@@ -431,6 +447,7 @@ function collectInput() {
   const minOversPerSide = Number($('minOversPerSide').value);
   return {
     matchName: $('matchName').value.trim(),
+    customTimePerOver: $('matchType').value === 'custom' ? Number($('customTimePerOver').value) : null,
     capturerFirstName: $('reportCapturerFirstName').value.trim() || 'Name',
     capturerSurname: $('reportCapturerSurname').value.trim() || 'Surname',
     capturedBy: `${$('reportCapturerFirstName').value.trim() || 'Name'} ${$('reportCapturerSurname').value.trim() || 'Surname'}`,
@@ -582,6 +599,7 @@ $('resetButton').addEventListener('click', () => {
   suspendAutoCalculation = true;
   validationStarted = false;
   $('matchName').value = '';
+  $('customTimePerOver').value = '';
   $('reportCapturerFirstName').value = 'Name';
   $('reportCapturerSurname').value = 'Surname';
   $('matchType').value = '';
@@ -845,6 +863,7 @@ $('syncNow').addEventListener('click', () => uploadPendingMatches());
 function inputFromUiRaw(input) {
   return {
     matchName: input.matchName || '',
+    customTimePerOver: input.customTimePerOver ?? null,
     capturerFirstName: input.capturerFirstName || 'Name',
     capturerSurname: input.capturerSurname || 'Surname',
     capturedBy: input.capturedBy || `${input.capturerFirstName || 'Name'} ${input.capturerSurname || 'Surname'}`.trim(),
@@ -869,6 +888,7 @@ function loadScenario(input) {
   previousMatchType = $('matchType').value;
   applyMatchType(matchType, { presetOvers: false, preserveOtherMinimum: true });
   $('matchName').value = input.matchName || '';
+  $('customTimePerOver').value = input.customTimePerOver ?? '';
   $('reportCapturerFirstName').value = input.capturerFirstName || 'Name';
   $('reportCapturerSurname').value = input.capturerSurname || 'Surname';
   $('firstOvers').value = input.firstOvers;
