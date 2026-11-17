@@ -1092,7 +1092,7 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     const selected = !!competitionSelect?.value;
     const gateHelp = document.getElementById('overCalcGateHelp');
     document.querySelectorAll('[data-calc]').forEach(field => {
-      field.disabled = !selected || field.readOnly;
+      field.disabled = !selected;
     });
     const scenarioSourceField = document.getElementById('scenarioCessationSource');
     const scenarioEarliestField = document.getElementById('scenarioEarliestRestart');
