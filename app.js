@@ -217,16 +217,24 @@ function applyMatchType(type, { presetOvers = true, preserveOtherMinimum = false
 }
 $('matchType').addEventListener('change', () => {
   const nextType = $('matchType').value;
-  const hasEvents = $('firstEvents').children.length || $('secondEvents').children.length;
-  if (hasEvents && !confirm('Changing match type changes the innings allocation. Clear the interruption entries and continue?')) {
+  // Blank default rows are not captured interruption data and never require
+  // confirmation. Only warn when at least one row contains an entered value.
+  const hasCapturedEvents =
+    readEventRows('firstEvents').length > 0 ||
+    readEventRows('secondEvents').length > 0;
+  if (hasCapturedEvents && !confirm('Changing match type changes the innings allocation. Clear the interruption entries and continue?')) {
     $('matchType').value = previousMatchType;
     return;
   }
-  if (hasEvents) {
-    $('firstEvents').replaceChildren();
-    $('secondEvents').replaceChildren();
-    updateEmptyMessages();
-  }
+
+  // A match-type change always starts both innings with exactly one clean row.
+  suspendAutoCalculation = true;
+  $('firstEvents').replaceChildren();
+  $('secondEvents').replaceChildren();
+  addEventRow('firstEvents');
+  addEventRow('secondEvents');
+  suspendAutoCalculation = false;
+
   previousMatchType = nextType;
   applyMatchType(nextType);
   validationStarted = true;
