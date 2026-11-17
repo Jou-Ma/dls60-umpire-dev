@@ -119,15 +119,9 @@ For each test, retain the input sheet, official reference output, application ou
 ### 8.1 Match setup and Time per Over
 
 - [ ] Match Type is the only field on the first setup row on desktop and mobile.
-- [ ] The next row is ordered Overs per innings, Time per Over, Minimum overs per side.
-- [ ] ODI displays 4.2 minutes per over as read-only.
-- [ ] T20 displays 4.25 minutes per over as read-only.
-- [ ] Promotion League – 45 Overs displays 3.75 minutes per over as read-only.
-- [ ] Women's League – 35 Overs displays 3.75 minutes per over as read-only; minimum overs remains editable and required.
-- [ ] Women's T20 displays 3.75 minutes per over as read-only; minimum overs remains editable and required.
-- [ ] Generic 50-over and 40-over presets have an editable, required Time per Over value.
-- [ ] Custom match type has editable overs, minimum overs and Time per Over.
-- [ ] Time per Over remains independent of the Appendix A worksheet; changing either setting does not change the other.
+- [ ] The next row contains Overs per innings and Minimum overs per side.
+- [ ] DLS match setup has no Time per Over field; time-based rates remain in Over Calcs only.
+- [ ] Custom match type has editable overs and minimum overs.
 
 ### 8.2 Innings controls and allocation
 
