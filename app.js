@@ -1088,9 +1088,24 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     const value = Number(timePerOverField?.value);
     return timePerOverField?.value?.trim() && Number.isFinite(value) && value > 0 ? value : null;
   };
+  const updateCompetitionGate = () => {
+    const selected = !!competitionSelect?.value;
+    const gateHelp = document.getElementById('overCalcGateHelp');
+    document.querySelectorAll('[data-calc]').forEach(field => {
+      field.disabled = !selected || field.readOnly;
+    });
+    const scenarioSourceField = document.getElementById('scenarioCessationSource');
+    const scenarioEarliestField = document.getElementById('scenarioEarliestRestart');
+    if (scenarioSourceField) scenarioSourceField.disabled = !selected;
+    if (scenarioEarliestField) scenarioEarliestField.disabled = !selected;
+    if (gateHelp) gateHelp.textContent = selected
+      ? 'Match type selected. Worksheet inputs are now available.'
+      : 'Competition / match type selection is required before proceeding.';
+  };
   const updateCompetitionRate = () => {
     const competition = competitionSelect?.value || '';
     const isOther = competition === 'other';
+    updateCompetitionGate();
     if (timePerOverField) {
       timePerOverField.readOnly = !isOther;
       if (Object.prototype.hasOwnProperty.call(competitionRates, competition)) {
