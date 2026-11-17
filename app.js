@@ -1202,7 +1202,8 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
   const resetButton = document.getElementById('resetAppendixA');
   if (resetButton) resetButton.addEventListener('click', () => {
     document.querySelectorAll('[data-calc]').forEach(el => { el.value = ''; });
-    update();
+    if (competitionSelect) competitionSelect.value = '';
+    updateCompetitionRate();
   });
   document.querySelectorAll('[data-calc]').forEach(el => {
     el.addEventListener('input', update);
