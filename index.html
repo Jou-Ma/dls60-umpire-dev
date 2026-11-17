@@ -184,11 +184,11 @@
         <div class="appendix-heading-actions"><span class="tag">Draft layout</span><button class="button button-secondary" id="resetAppendixA" type="button">Reset Over Calcs</button></div>
       </div>
       <section class="panel over-calc-settings" aria-label="Competition settings">
-        <div class="panel-heading"><div><div class="step-label">MATCH CONDITIONS</div><h2>Competition settings</h2><p class="panel-hint">Select the applicable competition to set the time allowance used throughout Over Calcs.</p></div></div>
+        <div class="panel-heading"><div><div class="step-label">MATCH CONDITIONS</div><h2>Competition settings</h2><p class="panel-hint">Select the applicable competition / match type first. All worksheet entries remain locked until this selection sets the correct time allowance.</p></div></div>
         <div class="field-grid field-grid-2">
           <label class="field"><span>Competition</span>
-            <select id="overCalcCompetition">
-              <option value="" selected>Select competition…</option>
+            <select id="overCalcCompetition" required aria-describedby="overCalcGateHelp">
+              <option value="" selected disabled>Select competition / match type first…</option>
               <option value="t20">T20</option>
               <option value="promotion-45">Promotion League – 45 Overs</option>
               <option value="womens-35">Women's League – 35 Overs</option>
@@ -199,7 +199,7 @@
           </label>
           <label class="field"><span>Time per Over (minutes)</span>
             <input id="timePerOver" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="Select a competition" readonly>
-            <small class="field-help" id="timePerOverHelp">Automatically populated from the selected competition. Select Other to enter a value.</small>
+            <small class="field-help" id="timePerOverHelp">Select a competition / match type before entering any worksheet values.</small><small class="field-error" id="overCalcGateHelp" role="status" aria-live="polite">Competition / match type selection is required before proceeding.</small>
           </label>
         </div>
       </section>
@@ -207,79 +207,79 @@
         <div class="panel-heading"><div><div class="step-label">TABLE 1</div><h2>First-innings delay or interruptions</h2><p class="panel-hint">Use when a delay or interruption occurs during the First Innings.</p></div></div>
         <h3 class="calc-group-title">Time</h3>
         <div class="calc-table-wrap"><table class="calc-sheet"><thead><tr><th>Ref.</th><th>Calculation / description</th><th>Entry</th></tr></thead><tbody>
-          <tr><td>A</td><td>Net playing time available at start of the match</td><td><input data-calc="a-a" inputmode="numeric" placeholder="Minutes" aria-label="A: Net playing time available at start of match"><span>minutes</span></td></tr>
-          <tr><td>B</td><td>Time innings in progress</td><td><input data-calc="a-b" inputmode="numeric" placeholder="Minutes"></td></tr>
-          <tr><td>C</td><td>Playing time lost</td><td><input data-calc="a-c" inputmode="numeric" placeholder="Minutes"></td></tr>
-          <tr><td>D</td><td>Extra time available</td><td><input data-calc="a-d" inputmode="numeric" placeholder="Minutes"></td></tr>
-          <tr><td>E</td><td>Time made up from reduced interval</td><td><input data-calc="a-e" inputmode="numeric" placeholder="Minutes"></td></tr>
-          <tr><td>F</td><td>Effective playing time lost [C – (D + E)]</td><td><input data-calc="a-f" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td>G</td><td>Remaining playing time available (A - F)</td><td><input data-calc="a-g" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td>H</td><td>G divided by Time per Over (to 2 decimal places)</td><td><input data-calc="a-h" inputmode="decimal" placeholder="Overs" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td>I</td><td>Max overs per team [H/2] (round up fractions)</td><td><input data-calc="a-i" inputmode="numeric" placeholder="Overs" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td></td><td>Bowling restrictions (overs × bowlers lookup)</td><td><input data-calc="a-bowler" inputmode="text" placeholder="Overs × bowlers" readonly aria-readonly="true"></td></tr>
-          <tr><td></td><td data-pp-label>Powerplay allocation</td><td class="split-entry powerplay-entry"><input data-calc="a-pp1" aria-label="Powerplay 1 overs" readonly aria-readonly="true" placeholder="P1"><span data-pp-plus>+</span><input data-calc="a-pp2" aria-label="Powerplay 2 overs" readonly aria-readonly="true" placeholder="P2"><span data-pp-plus>+</span><input data-calc="a-pp3" aria-label="Powerplay 3 overs" readonly aria-readonly="true" placeholder="P3"></td></tr>
+          <tr><td>A</td><td>Net playing time available at start of the match</td><td><input disabled data-calc="a-a" inputmode="numeric" placeholder="Minutes" aria-label="A: Net playing time available at start of match"><span>minutes</span></td></tr>
+          <tr><td>B</td><td>Time innings in progress</td><td><input disabled data-calc="a-b" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>C</td><td>Playing time lost</td><td><input disabled data-calc="a-c" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>D</td><td>Extra time available</td><td><input disabled data-calc="a-d" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>E</td><td>Time made up from reduced interval</td><td><input disabled data-calc="a-e" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>F</td><td>Effective playing time lost [C – (D + E)]</td><td><input disabled data-calc="a-f" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td>G</td><td>Remaining playing time available (A - F)</td><td><input disabled data-calc="a-g" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td>H</td><td>G divided by Time per Over (to 2 decimal places)</td><td><input disabled data-calc="a-h" inputmode="decimal" placeholder="Overs" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td>I</td><td>Max overs per team [H/2] (round up fractions)</td><td><input disabled data-calc="a-i" inputmode="numeric" placeholder="Overs" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td></td><td>Bowling restrictions (overs × bowlers lookup)</td><td><input disabled data-calc="a-bowler" inputmode="text" placeholder="Overs × bowlers" readonly aria-readonly="true"></td></tr>
+          <tr><td></td><td data-pp-label>Powerplay allocation</td><td class="split-entry powerplay-entry"><input disabled data-calc="a-pp1" aria-label="Powerplay 1 overs" readonly aria-readonly="true" placeholder="P1"><span data-pp-plus>+</span><input disabled data-calc="a-pp2" aria-label="Powerplay 2 overs" readonly aria-readonly="true" placeholder="P2"><span data-pp-plus>+</span><input disabled data-calc="a-pp3" aria-label="Powerplay 3 overs" readonly aria-readonly="true" placeholder="P3"></td></tr>
         </tbody></table></div>
         <h3 class="calc-group-title">Rescheduled playing hours</h3>
         <div class="calc-table-wrap"><table class="calc-sheet"><thead><tr><th>Ref.</th><th>Calculation / description</th><th>Entry</th></tr></thead><tbody>
-          <tr><td>J</td><td>First session to commence or recommence</td><td><input data-calc="a-j" type="time"></td></tr>
-          <tr><td>K</td><td>Length of innings [I × Time per Over] (round up fractions)</td><td><input data-calc="a-k" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td>L</td><td>Rescheduled first innings cessation time [J + (K – B)]</td><td><input data-calc="a-l" type="time" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td>M</td><td>Length of interval</td><td><input data-calc="a-m" inputmode="numeric" placeholder="Minutes"></td></tr>
-          <tr><td>N</td><td>Second innings commencement time [L + M]</td><td><input data-calc="a-n" type="time" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td>O</td><td>Rescheduled second innings cessation time [N + K]</td><td><input data-calc="a-o" type="time" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td>J</td><td>First session to commence or recommence</td><td><input disabled data-calc="a-j" type="time"></td></tr>
+          <tr><td>K</td><td>Length of innings [I × Time per Over] (round up fractions)</td><td><input disabled data-calc="a-k" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td>L</td><td>Rescheduled first innings cessation time [J + (K – B)]</td><td><input disabled data-calc="a-l" type="time" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td>M</td><td>Length of interval</td><td><input disabled data-calc="a-m" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>N</td><td>Second innings commencement time [L + M]</td><td><input disabled data-calc="a-n" type="time" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td>O</td><td>Rescheduled second innings cessation time [N + K]</td><td><input disabled data-calc="a-o" type="time" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
         </tbody></table></div>
         <p class="appendix-warning">Ensure that the match is not finishing earlier than the original or rescheduled cessation time by applying clause 13.7.2. If so, add at least one over to each team and recalculate (I) to (O) above to prevent this from happening.</p>
       </section>
       <section class="panel appendix-panel">
         <div class="panel-heading"><div><div class="step-label">TABLE 2</div><h2>Check whether a First Innings should be terminated</h2><p class="panel-hint">Use when an interruption occurs during the First Innings.</p></div></div>
         <div class="calc-table-wrap"><table class="calc-sheet"><thead><tr><th>Ref.</th><th>Calculation / description</th><th>Entry</th></tr></thead><tbody>
-          <tr><td>P</td><td>Proposed re-start time</td><td><input data-calc="b-p" type="time"></td></tr>
-          <tr><td>Q</td><td>Rescheduled cut-off time allowing for full use of any extra time provision</td><td><input data-calc="b-q" type="time"></td></tr>
-          <tr><td>R</td><td>Minutes between P and Q</td><td><input data-calc="b-r" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td>S</td><td>Potential overs to be bowled [R / Time per Over] (round up fractions)</td><td><input data-calc="b-s" inputmode="numeric" placeholder="Overs" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td>T</td><td>Number of complete overs faced to date in first innings</td><td><input data-calc="b-t" inputmode="numeric" placeholder="Overs"></td></tr>
+          <tr><td>P</td><td>Proposed re-start time</td><td><input disabled data-calc="b-p" type="time"></td></tr>
+          <tr><td>Q</td><td>Rescheduled cut-off time allowing for full use of any extra time provision</td><td><input disabled data-calc="b-q" type="time"></td></tr>
+          <tr><td>R</td><td>Minutes between P and Q</td><td><input disabled data-calc="b-r" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td>S</td><td>Potential overs to be bowled [R / Time per Over] (round up fractions)</td><td><input disabled data-calc="b-s" inputmode="numeric" placeholder="Overs" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td>T</td><td>Number of complete overs faced to date in first innings</td><td><input disabled data-calc="b-t" inputmode="numeric" placeholder="Overs"></td></tr>
         </tbody></table></div>
         <div class="decision-notes" aria-live="polite"><p data-decision-option="resume"><strong>If S is greater than T:</strong> Revert to Table 1.</p><p data-decision-option="terminated"><strong>If S is less than or equal to T:</strong> The first innings is terminated — go to Table 3.</p></div>
       </section>
       <section class="panel appendix-panel">
         <div class="panel-heading"><div><div class="step-label">TABLE 3</div><h2>Start of the Second Innings</h2><p class="panel-hint">Maximum overs to be bowled.</p></div></div>
         <div class="calc-table-wrap"><table class="calc-sheet"><thead><tr><th>Ref.</th><th>Calculation / description</th><th>Entry</th></tr></thead><tbody>
-          <tr><td>A</td><td>Maximum overs to be bowled (if first innings was terminated, S from Table 2)</td><td><input data-calc="c-a" inputmode="numeric" placeholder="Overs" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td>B</td><td>Scheduled length of innings: [A × Time per Over] (round up fractions)</td><td><input data-calc="c-b" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td>C</td><td>Start time</td><td><input data-calc="c-c" type="time"></td></tr>
-          <tr><td>D</td><td>Scheduled cessation time [C + B]</td><td><input data-calc="c-d" type="time" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td></td><td>Maximum overs per bowler (bowling restrictions lookup)</td><td><input data-calc="c-bowler" inputmode="text" placeholder="Overs × bowlers" readonly aria-readonly="true"></td></tr>
-          <tr><td></td><td data-pp-label>Powerplay allocation</td><td class="split-entry powerplay-entry"><input data-calc="c-pp1" aria-label="Powerplay 1 overs" readonly aria-readonly="true" placeholder="P1"><span data-pp-plus>+</span><input data-calc="c-pp2" aria-label="Powerplay 2 overs" readonly aria-readonly="true" placeholder="P2"><span data-pp-plus>+</span><input data-calc="c-pp3" aria-label="Powerplay 3 overs" readonly aria-readonly="true" placeholder="P3"></td></tr>
+          <tr><td>A</td><td>Maximum overs to be bowled (if first innings was terminated, S from Table 2)</td><td><input disabled data-calc="c-a" inputmode="numeric" placeholder="Overs" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td>B</td><td>Scheduled length of innings: [A × Time per Over] (round up fractions)</td><td><input disabled data-calc="c-b" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td>C</td><td>Start time</td><td><input disabled data-calc="c-c" type="time"></td></tr>
+          <tr><td>D</td><td>Scheduled cessation time [C + B]</td><td><input disabled data-calc="c-d" type="time" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td></td><td>Maximum overs per bowler (bowling restrictions lookup)</td><td><input disabled data-calc="c-bowler" inputmode="text" placeholder="Overs × bowlers" readonly aria-readonly="true"></td></tr>
+          <tr><td></td><td data-pp-label>Powerplay allocation</td><td class="split-entry powerplay-entry"><input disabled data-calc="c-pp1" aria-label="Powerplay 1 overs" readonly aria-readonly="true" placeholder="P1"><span data-pp-plus>+</span><input disabled data-calc="c-pp2" aria-label="Powerplay 2 overs" readonly aria-readonly="true" placeholder="P2"><span data-pp-plus>+</span><input disabled data-calc="c-pp3" aria-label="Powerplay 3 overs" readonly aria-readonly="true" placeholder="P3"></td></tr>
         </tbody></table></div>
       </section>
       <section class="panel appendix-panel">
         <div class="panel-heading"><div><div class="step-label">TABLE 4</div><h2>Interruption after the start of the Second Innings</h2><p class="panel-hint">Time and overs calculations.</p></div></div>
         <h3 class="calc-group-title">Time</h3>
         <div class="calc-table-wrap"><table class="calc-sheet"><thead><tr><th>Ref.</th><th>Calculation / description</th><th>Entry</th></tr></thead><tbody>
-          <tr><td>A</td><td>Time at start of innings</td><td><input data-calc="d-a" type="time"></td></tr>
-          <tr><td>B</td><td>Time at start of interruption</td><td><input data-calc="d-b" type="time"></td></tr>
-          <tr><td>C</td><td>Time innings in progress [B – A]</td><td><input data-calc="d-c" inputmode="numeric" placeholder="Calculated" readonly aria-readonly="true"></td></tr>
-          <tr><td>D</td><td>Restart time</td><td><input data-calc="d-d" type="time"><small class="calc-field-error" id="d-d-error" aria-live="polite"></small></td></tr>
-          <tr><td>E</td><td>Length of interruption [D – B]</td><td><input data-calc="d-e" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td>F</td><td>Additional time available (any unused provision for ‘Extra Time’ or for earlier than scheduled start of second innings)</td><td><input data-calc="d-f" inputmode="numeric" placeholder="Minutes"></td></tr>
-          <tr><td>G</td><td>Total playing time lost [E – F]</td><td><input data-calc="d-g" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td>A</td><td>Time at start of innings</td><td><input disabled data-calc="d-a" type="time"></td></tr>
+          <tr><td>B</td><td>Time at start of interruption</td><td><input disabled data-calc="d-b" type="time"></td></tr>
+          <tr><td>C</td><td>Time innings in progress [B – A]</td><td><input disabled data-calc="d-c" inputmode="numeric" placeholder="Calculated" readonly aria-readonly="true"></td></tr>
+          <tr><td>D</td><td>Restart time</td><td><input disabled data-calc="d-d" type="time"><small class="calc-field-error" id="d-d-error" aria-live="polite"></small></td></tr>
+          <tr><td>E</td><td>Length of interruption [D – B]</td><td><input disabled data-calc="d-e" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td>F</td><td>Additional time available (any unused provision for ‘Extra Time’ or for earlier than scheduled start of second innings)</td><td><input disabled data-calc="d-f" inputmode="numeric" placeholder="Minutes"></td></tr>
+          <tr><td>G</td><td>Total playing time lost [E – F]</td><td><input disabled data-calc="d-g" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
         </tbody></table></div>
         <h3 class="calc-group-title">Overs</h3>
         <div class="calc-table-wrap"><table class="calc-sheet"><thead><tr><th>Ref.</th><th>Calculation / description</th><th>Entry</th></tr></thead><tbody>
-          <tr><td>H</td><td>Maximum overs at start of innings</td><td><input data-calc="d-h" inputmode="numeric" placeholder="Overs"></td></tr>
-          <tr><td>I</td><td>Overs lost [G / Time per Over] (rounded down)</td><td><input data-calc="d-i" inputmode="numeric" placeholder="Overs" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td>J</td><td>Adjusted maximum length of innings [H – I]</td><td><input data-calc="d-j" inputmode="numeric" placeholder="Overs" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td>K</td><td>Rescheduled length of innings [J × Time per Over rounded up]</td><td><input data-calc="d-k" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td>L</td><td>Amended cessation time of innings [D + (K – C)]</td><td><input data-calc="d-l" type="time" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
-          <tr><td></td><td>Maximum overs per bowler (bowling restrictions lookup)</td><td><input data-calc="d-bowler" inputmode="text" placeholder="Overs × bowlers" readonly aria-readonly="true"></td></tr>
-          <tr><td></td><td data-pp-label>Powerplay allocation</td><td class="split-entry powerplay-entry"><input data-calc="d-pp1" aria-label="Powerplay 1 overs" readonly aria-readonly="true" placeholder="P1"><span data-pp-plus>+</span><input data-calc="d-pp2" aria-label="Powerplay 2 overs" readonly aria-readonly="true" placeholder="P2"><span data-pp-plus>+</span><input data-calc="d-pp3" aria-label="Powerplay 3 overs" readonly aria-readonly="true" placeholder="P3"></td></tr>
+          <tr><td>H</td><td>Maximum overs at start of innings</td><td><input disabled data-calc="d-h" inputmode="numeric" placeholder="Overs"></td></tr>
+          <tr><td>I</td><td>Overs lost [G / Time per Over] (rounded down)</td><td><input disabled data-calc="d-i" inputmode="numeric" placeholder="Overs" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td>J</td><td>Adjusted maximum length of innings [H – I]</td><td><input disabled data-calc="d-j" inputmode="numeric" placeholder="Overs" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td>K</td><td>Rescheduled length of innings [J × Time per Over rounded up]</td><td><input disabled data-calc="d-k" inputmode="numeric" placeholder="Minutes" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td>L</td><td>Amended cessation time of innings [D + (K – C)]</td><td><input disabled data-calc="d-l" type="time" readonly aria-readonly="true" placeholder="Calculated"></td></tr>
+          <tr><td></td><td>Maximum overs per bowler (bowling restrictions lookup)</td><td><input disabled data-calc="d-bowler" inputmode="text" placeholder="Overs × bowlers" readonly aria-readonly="true"></td></tr>
+          <tr><td></td><td data-pp-label>Powerplay allocation</td><td class="split-entry powerplay-entry"><input disabled data-calc="d-pp1" aria-label="Powerplay 1 overs" readonly aria-readonly="true" placeholder="P1"><span data-pp-plus>+</span><input disabled data-calc="d-pp2" aria-label="Powerplay 2 overs" readonly aria-readonly="true" placeholder="P2"><span data-pp-plus>+</span><input disabled data-calc="d-pp3" aria-label="Powerplay 3 overs" readonly aria-readonly="true" placeholder="P3"></td></tr>
         </tbody></table></div>
       </section>
       <section class="panel appendix-panel" id="recommencementScenarios">
         <div class="panel-heading"><div><div class="step-label">RECOMMENCEMENT SCENARIOS</div><h2>Second-innings recommencement time</h2><p class="panel-hint">Compare proposed restart times against the minimum-overs cut-off. Original Appendix A entries remain unchanged.</p></div></div>
         <div class="field-grid field-grid-2 scenario-controls">
           <label class="field"><span>Applicable second-innings cessation time</span>
-            <select id="scenarioCessationSource">
+            <select id="scenarioCessationSource" disabled>
               <option value="">Select cessation-time source…</option>
               <option value="a-o">Table 1 – O · Rescheduled second-innings cessation</option>
               <option value="c-d">Table 3 – D · Scheduled second-innings cessation</option>
@@ -288,7 +288,7 @@
             <small class="field-help">Select the calculation that governs the current match situation.</small>
           </label>
           <label class="field"><span>Earliest proposed recommencement time</span>
-            <input id="scenarioEarliestRestart" type="time">
+            <input id="scenarioEarliestRestart" type="time" disabled>
             <small class="field-help">The first scenario; later options are generated automatically.</small>
           </label>
         </div>
