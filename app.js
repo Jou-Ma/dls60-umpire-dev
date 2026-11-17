@@ -1213,7 +1213,7 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     if (!scenarioSource || !scenarioEarliest || !scenarioRows || !scenarioSummary) return;
     const source = scenarioSource.value;
     const cessation = source ? timeMinutes(source) : null;
-    const earliest = scenarioEarliest.value && /^\\d{2}:\\d{2}$/.test(scenarioEarliest.value)
+    const earliest = scenarioEarliest.value && /^\d{2}:\d{2}$/.test(scenarioEarliest.value)
       ? (() => { const [h,m] = scenarioEarliest.value.split(':').map(Number); return h * 60 + m; })()
       : null;
     const minimumOvers = Number(document.getElementById('minOversPerSide')?.value);
