@@ -128,3 +128,10 @@
 
 /* Highlight the applicable Appendix A Table 2 outcome after S and T are available. */
 .decision-notes p.is-selected{border:2px solid var(--navy2);background:#e8f0fb;color:var(--navy);font-weight:700;box-shadow:0 0 0 2px rgba(43,75,119,.08)}
+
+
+/* Table 4 validation feedback */
+.calc-field-error:empty{display:none}
+.calc-field-error:not(:empty){display:block;color:var(--red);font-size:10px;font-weight:650;line-height:1.35;margin-top:4px}
+.calc-sheet tr.is-invalid input{border-color:var(--red)!important;background:#fff7f6!important;box-shadow:0 0 0 3px #b4231812!important}
+.calc-sheet tr.is-invalid td:nth-child(2){color:var(--red)!important;font-weight:700}
