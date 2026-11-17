@@ -161,7 +161,7 @@ $('reportCapturerSurname').addEventListener('input', handleCoreInputChange);
 function applyMatchType(type, { presetOvers = true, preserveOtherMinimum = false } = {}) {
   const preset = MATCH_TYPES[type];
   const isFixedMinimum = type === 'odi' || type === 't20';
-  const isOther = type.startsWith('other-') || type === 'custom';
+  const isOther = type.startsWith('other-') || type.startsWith('womens-') || type === 'custom';
   const selected = !!type;
   $('firstOvers').disabled = !selected;
   $('minOversPerSide').disabled = !selected;
