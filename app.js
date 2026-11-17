@@ -16,7 +16,9 @@ const MATCH_TYPES = {
   odi: { overs: 50, minOvers: 20, minutesPerOver: 4.2, label: 'ODI regulations (50 overs/innings)' },
   t20: { overs: 20, minOvers: 5, minutesPerOver: 4.25, label: 'Twenty20 (20 overs/innings)' },
   'other-50-10': { overs: 50, minOvers: 10, label: 'Other: 50 overs/innings' },
-  'other-45-20': { overs: 45, minOvers: 20, minutesPerOver: 3.75, label: 'Other: 45 overs/innings' },
+  'other-45-20': { overs: 45, minOvers: 20, minutesPerOver: 3.75, label: 'Promotion League (45 overs/innings)' },
+  'womens-35': { overs: 35, minOvers: null, minutesPerOver: 3.75, label: "Women's League (35 overs/innings)" },
+  'womens-t20': { overs: 20, minOvers: null, minutesPerOver: 3.75, label: "Women's T20 (20 overs/innings)" },
   'other-40-10': { overs: 40, minOvers: 10, label: 'Other: 40 overs/innings' }
 };
 
@@ -185,7 +187,11 @@ function applyMatchType(type, { presetOvers = true, preserveOtherMinimum = false
     $('minimumOversHelp').textContent = 'ODI defaults to 20; T20 defaults to 5.';
   } else if (preset) {
     if (presetOvers) $('firstOvers').value = String(preset.overs);
-    if (!preserveOtherMinimum || isFixedMinimum) $('minOversPerSide').value = String(preset.minOvers);
+    if (preset.minOvers == null) {
+      if (presetOvers) $('minOversPerSide').value = '';
+    } else if (!preserveOtherMinimum || isFixedMinimum) {
+      $('minOversPerSide').value = String(preset.minOvers);
+    }
     if (hasKnownRate) rateField.value = String(knownPresetRate);
     else if (presetOvers) rateField.value = '';
   } else if (type === 'custom') {
