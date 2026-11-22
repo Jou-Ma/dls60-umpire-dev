@@ -1124,7 +1124,6 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
   const ceilOvers = value => Math.ceil(value - 1e-10);
   const ceilMinutes = value => Math.ceil(value - 1e-10);
   const competitionSelect = document.getElementById('overCalcCompetition');
-  const t20PowerplayPanels = ['t20PowerplayAllocation', 't20PowerplayReference'].map(id => document.getElementById(id)).filter(Boolean);
   const timePerOverField = document.getElementById('timePerOver');
   const timePerOverHelp = document.getElementById('timePerOverHelp');
   const competitionRates = {
@@ -1161,8 +1160,6 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
   const updateCompetitionRate = () => {
     const competition = competitionSelect?.value || '';
     const isOther = competition === 'other';
-    const isT20Competition = competition === 't20' || competition === 'womens-t20';
-    t20PowerplayPanels.forEach(panel => { panel.hidden = !isT20Competition; });
     if (timePerOverField) {
       timePerOverField.readOnly = !isOther;
       if (Object.prototype.hasOwnProperty.call(competitionRates, competition)) {
