@@ -155,3 +155,7 @@
 .calculated-allocation strong{font-size:18px;color:var(--navy)}
 .calculated-allocation small{font-size:10px;color:#718097}
 @media(max-width:560px){.innings-score-grid{grid-template-columns:1fr 1fr;max-width:none}}
+
+/* T20 reduced-innings Powerplay reference: keep the two-column table compact on mobile. */
+.powerplay-reference-table{min-width:0;max-width:560px}
+.powerplay-reference-table th,.powerplay-reference-table td{text-align:center}
