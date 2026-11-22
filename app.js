@@ -1069,6 +1069,50 @@ if (navigator.onLine) setTimeout(() => uploadPendingMatches({ automatic: true })
     50:[10,30,10]
   };
   const formatCricketOvers = balls => `${Math.floor(balls / 6)}.${balls % 6}`;
+  const powerplayCompetitionSelect = document.getElementById('powerplayCompetition');
+  const powerplayTableContainer = document.getElementById('powerplayTableContainer');
+  const powerplayTableHead = document.getElementById('powerplayTableHead');
+  const powerplayTableRows = document.getElementById('powerplayTableRows');
+  const powerplayTableSource = document.getElementById('powerplayTableSource');
+  const renderPowerplayTable = () => {
+    if (!powerplayCompetitionSelect || !powerplayTableContainer || !powerplayTableHead || !powerplayTableRows) return;
+    const competition = powerplayCompetitionSelect.value;
+    const isT20 = competition === 't20' || competition === 'womens-t20';
+    const allocationTable = competition === 'promotion-45'
+      ? promotion45Powerplays
+      : competition === 'mens-premier'
+        ? mensPremierPowerplays
+        : isT20 ? t20Powerplay1Balls : null;
+    if (!allocationTable) {
+      powerplayTableContainer.hidden = true;
+      powerplayTableHead.innerHTML = '';
+      powerplayTableRows.innerHTML = '';
+      if (powerplayTableSource) powerplayTableSource.textContent = '';
+      return;
+    }
+    const headers = isT20
+      ? ['Total overs in innings', 'Powerplay 1', 'Powerplay 2']
+      : ['Total overs in innings', 'Powerplay 1', 'Powerplay 2', 'Powerplay 3'];
+    powerplayTableHead.innerHTML = '<tr>' + headers.map(label => '<th scope="col">' + label + '</th>').join('') + '</tr>';
+    const oversList = Object.keys(allocationTable).map(Number).sort((a, b) => a - b);
+    powerplayTableRows.innerHTML = oversList.map(overs => {
+      let allocations;
+      if (isT20) {
+        const pp1Balls = allocationTable[overs];
+        allocations = [formatCricketOvers(pp1Balls), formatCricketOvers(overs * 6 - pp1Balls)];
+      } else {
+        allocations = allocationTable[overs].map(value => String(value));
+      }
+      return '<tr><td>' + overs + '</td>' + allocations.map(value => '<td>' + value + '</td>').join('') + '</tr>';
+    }).join('');
+    if (powerplayTableSource) {
+      powerplayTableSource.textContent = isT20
+        ? 'Source: T20 reduced-innings allocation table used by the calculator for ' + (competition === 'womens-t20' ? "Women's T20" : 'T20') + '.'
+        : 'Source: Competition-specific Powerplay allocation table used by the calculator.';
+    }
+    powerplayTableContainer.hidden = false;
+  };
+  if (powerplayCompetitionSelect) powerplayCompetitionSelect.addEventListener('change', renderPowerplayTable);
   const setPowerplay = (prefix, overs) => {
     const competition = competitionSelect?.value || '';
     const totalOvers = overs == null ? null : Math.trunc(overs);
