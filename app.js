@@ -14,7 +14,7 @@ let uploadInProgress = false;
 
 const MATCH_TYPES = {
   odi: { overs: 50, minOvers: 20, label: 'ODI regulations (50 overs/innings)' },
-  t20: { overs: 20, minOvers: 55, label: 'Twenty20 (20 overs/innings)' },
+  t20: { overs: 20, minOvers: 5, label: 'Twenty20 (20 overs/innings)' },
   'other-50-10': { overs: 50, minOvers: 10, label: 'Other: 50 overs/innings' },
   'other-45-20': { overs: 45, minOvers: 20, label: 'Promotion League (45 overs/innings)' },
   'womens-35': { overs: 35, minOvers: null, label: "Women's League (35 overs/innings)" },
