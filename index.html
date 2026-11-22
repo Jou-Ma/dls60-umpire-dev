@@ -30,6 +30,7 @@
     <nav class="app-tabs" role="tablist" aria-label="Application sections">
       <button class="app-tab active" id="tab-button-dls" type="button" role="tab" aria-selected="true" aria-controls="tab-dls" data-app-tab="dls">DLS 6.0</button>
       <button class="app-tab" id="tab-button-a" type="button" role="tab" aria-selected="false" aria-controls="tab-a" data-app-tab="a" tabindex="-1">Over Calcs</button>
+      <button class="app-tab" id="tab-button-powerplay" type="button" role="tab" aria-selected="false" aria-controls="tab-powerplay" data-app-tab="powerplay" tabindex="-1">PowerPlay Tables</button>
       <button class="app-tab" id="tab-button-help" type="button" role="tab" aria-selected="false" aria-controls="tab-help" data-app-tab="help" tabindex="-1">Help</button>
     </nav>
     <section class="app-tab-panel active" id="tab-dls" role="tabpanel" aria-labelledby="tab-button-dls">
@@ -294,6 +295,32 @@
         </div>
       </section>
       <p class="appendix-footnote">Development calculation worksheet. Calculated fields update automatically from the supplied Appendix A formulas. Confirm the applicable Playing Conditions before using the outputs for a match.</p>
+    </section>
+    <section class="app-tab-panel" id="tab-powerplay" role="tabpanel" aria-labelledby="tab-button-powerplay" hidden>
+      <div class="appendix-heading">
+        <div><div class="step-label">COMPETITION REFERENCE</div><h1>PowerPlay Tables</h1><p class="panel-hint">Select a competition to view its Powerplay allocation table. Only competitions with an available allocation table are listed.</p></div>
+      </div>
+      <section class="panel">
+        <div class="field-grid field-grid-2">
+          <label class="field"><span>Competition</span>
+            <select id="powerplayCompetition">
+              <option value="" selected>Select a competition…</option>
+              <option value="t20">T20</option>
+              <option value="womens-t20">Women's T20</option>
+              <option value="promotion-45">Promotion League – 45 Overs</option>
+              <option value="mens-premier">Men's Premier League</option>
+            </select>
+          </label>
+        </div>
+        <div id="powerplayTableContainer" class="calc-table-wrap" hidden>
+          <table class="calc-sheet" aria-describedby="powerplayTableNote">
+            <thead id="powerplayTableHead"></thead>
+            <tbody id="powerplayTableRows"></tbody>
+          </table>
+        </div>
+        <p class="appendix-footnote" id="powerplayTableNote">Powerplay allocations are shown in cricket overs notation. For example, 1.3 means 1 over and 3 balls, not 1.3 decimal overs.</p>
+        <p class="appendix-footnote" id="powerplayTableSource"></p>
+      </section>
     </section>
     <section class="app-tab-panel placeholder-panel" id="tab-help" role="tabpanel" aria-labelledby="tab-button-help" hidden>
       <div class="appendix-heading"><div><div class="step-label">REFERENCE AND GUIDANCE</div><h1>Help</h1><p class="panel-hint">Guidance for using the calculator, understanding the Appendix workflows and reading DLS match reports will be organised here.</p></div></div>
